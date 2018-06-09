@@ -1,0 +1,54 @@
+<form [formGroup]="productForm">
+  <div class="row">
+    <div class="form-group col-sm-6">
+      <label>Nome</label>
+      <input type="text" class="form-control" [(ngModel)]="product.name" formControlName="name">
+    </div>
+    <div class="form-group col-sm-6">
+      <label>Foto</label>
+      <input *ngIf="product.photo === null || product.photo === undefined"
+        type="file" accept="image/*" (change)="onChangeImage($event)" class="form-control-file">
+      <div *ngIf="product.photo" class="row">
+        <div class="col-lg-8">
+            <img (click)=showDialogProductImg(product)
+            src="data:image/PNG;base64,{{product.photo}}" class="img-thumbnail">
+        </div>
+        <div class="col-sm-4">
+          <button class="btn btn-default" (click)="product.photo = null;">
+            <i class="fa fa-refresh"></i>&nbsp;Alterar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-2 col-lg-2 form-group">
+      <label>Preço</label>
+      <input type="number" class="form-control" [(ngModel)]="product.price" formControlName="price">
+    </div>
+    <div class="col-sm-2 col-lg-2 form-group">
+      <label>Altura</label>
+      <input type="number" class="form-control" [(ngModel)]="product.height" formControlName="height">
+    </div>
+    <div class="col-sm-2 col-lg-2 form-group">
+      <label>Largura</label>
+      <input type="number" class="form-control" [(ngModel)]="product.width" formControlName="width">
+    </div>
+    <div class="col-sm-2 col-lg-2 form-group">
+      <label>Diâmetro</label>
+      <input type="number" class="form-control" [(ngModel)]="product.diameter"
+        formControlName="diameter">
+    </div>
+    <div class="col-sm-2 col-lg-2 form-group">
+      <label>Peso</label>
+      <input type="number" class="form-control" [(ngModel)]="product.weight" formControlName="weight">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12 form-group">
+      <label>Descrição</label>
+      <textarea cols="30" rows="10" class="form-control"
+        [(ngModel)]="product.description" formControlName="description"></textarea>
+    </div>
+  </div>
+</form>

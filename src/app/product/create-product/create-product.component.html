@@ -1,0 +1,23 @@
+<div class="container">
+  <p-growl [(value)]="msgs"></p-growl>
+  <div class="row">
+    <div class="col-lg-12 col-md-12">
+        <h1>Novo Produto</h1>
+    </div>
+  </div>
+  <app-product-fields (notify)="onNotify($event)" [product]="product" [productForm]="productForm"></app-product-fields>
+  <!-- TODO: Criar componente global -->
+  <div class="row">
+    <div class="col-sm-12 pull-right">
+      <button class="btn btn-default" (click)="clearProdForm()">
+        <i class="fa fa-eraser"></i>&nbsp;Limpar
+      </button>
+      <button class="btn btn-danger">
+        <i class="fa fa-stop"></i>&nbsp;Cancelar
+      </button>
+      <button class="btn btn-success" [disabled]="productForm.invalid" (click)="save()">
+        <i class="fa fa-save"></i>&nbsp;Salvar
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,65 @@
+<app-modal-delete-product [product]="product"
+  (notify)="onNotify($event)"></app-modal-delete-product>
+
+<div class="container" *ngIf="product">
+  <div class="row">
+    <div class="col-sm-8 col-lg-8">
+      <h2>{{product.name}}</h2>
+    </div>
+    <div class="col-sm-4">
+      <button class="btn btn-default" (click)="goToEditProduct()">
+        <i class="fa fa-edit"></i>&nbsp;Editar
+      </button>
+      <button class="btn btn-danger" (click)="showModalDeleteProduct()">
+        <i class="fa fa-stop"></i>&nbsp;Deletar
+      </button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-8 img-responsive">
+      <img src="data:image/PNG;base64,{{product.photo}}" class="img-fluid">
+    </div>
+    <div class="col-lg-4 border">
+      <div class="row">
+        <div class="col-sm-12">
+          <h6>
+            <i class="fa fa-money"></i>&nbsp;Preço
+          </h6>
+          <p>{{product.price | currency: 'BRL'}}</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-4 col-lg-4" *ngIf="product.width">
+          <h6>
+            <i class="fa fa-arrows-h"></i> Largura
+          </h6>
+          <p>{{product.width}}</p>
+        </div>
+        <div class="col-sm-4 col-lg-4" *ngIf="product.height">
+          <h6>
+            <i class="fa fa-arrows-v"></i> Altura
+          </h6>
+          <p>{{product.height}}</p>
+        </div>
+        <div class="col-sm-4 col-lg-4" *ngIf="product.diameter">
+          <h6>Diâmetro</h6>
+          <p>{{product.diameter}}</p>
+        </div>
+      </div>
+      <div class="row" *ngIf="product.weight">
+        <div class="col-sm-12">
+          <h6>
+            <i class="fa fa-balance-scale"></i> Peso
+          </h6>
+          <p>{{product.weight}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="padding-top: 15px" *ngIf="product.description">
+    <div class="col-lg-12 border">
+      <h6>Descrição</h6>
+      {{product.description}}
+    </div>
+  </div>
+</div>

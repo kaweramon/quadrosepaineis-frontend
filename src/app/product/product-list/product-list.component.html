@@ -1,0 +1,68 @@
+<p-growl [(value)]="msgs"></p-growl>
+<div class="container">
+
+  <p-dialog header="{{productSelected?.name}}" [(visible)]="displayDialog" [modal]="true"
+    [responsive]="true">
+    <img src="data:image/PNG;base64,{{productSelected?.photo}}">
+  </p-dialog>
+
+  <app-modal-delete-product [product]="productSelected" (notify)="onNotify($event)"></app-modal-delete-product>
+
+  <div class="row">
+    <div class="col-sm-10 col-lg-10">
+      <h1><i class="fa fa-shopping-cart"></i>&nbsp;Produtos</h1>
+    </div>
+    <div class="col-sm-2 col-lg-2">
+      <button class="btn btn-primary pull-right" (click)="goToNewProduct()">
+        <i class="fa fa-plus"></i>&nbsp;Novo
+      </button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <p-dataView [value]="products" [paginator]="true" [rows]="10" [emptyMessage]="msgNoRecords"
+        [lazy]="true" (onLazyLoad)="loadData($event)" [totalRecords]="totalRecords">
+        <ng-template let-product pTemplate="listItem">
+          <div class="row" style="padding: 2em;">
+            <div class="col-lg-4 col-sm-4" style="text-align:center; border-bottom: 1px solid #d9d9d9">
+              <img *ngIf="product.photo" (click)=showDialogProductImg(product)
+                src="data:image/PNG;base64,{{product.photo}}" class="img-thumbnail">
+            </div>
+            <div class="col-lg-6 col-sm-6" style="border-bottom: 1px solid #d9d9d9">
+              <div class="row">
+                <div class="col-lg-3">
+                  Nome:
+                </div>
+                <div class="col-lg-9">
+                  <b>{{product.name}}</b>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-3">
+                  Preço:
+                </div>
+                <div class="col-lg-9">
+                  <b>{{product.price}}</b>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-2 col-sm-2" style="border-bottom: 1px solid #d9d9d9">
+              <button class="btn btn-default" pTooltip="Detalhes" tooltipPosition="left"
+                (click)="goToProductDetails(product.id)">
+                <i class="fa fa-search"></i>
+              </button>
+              <button class="btn btn-primary" pTooltip="Editar" tooltipPosition="top"
+                (click)="goToEditProduct(product.id)">
+                <i class="fa fa-edit"></i>
+              </button>
+              <button class="btn btn-danger" pTooltip="Remover" tooltipPosition="right"
+                (click)="showModalDeleteProduct(product)">
+                <i class="fa fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        </ng-template>
+      </p-dataView>
+    </div>
+  </div>
+</div>
