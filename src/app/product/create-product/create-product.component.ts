@@ -41,12 +41,20 @@ export class CreateProductComponent implements OnInit {
         this.service.uploadPhoto(result.id, this.photo).subscribe(() => {
           this.goToProductDetails(result.id);
         }, error => {
+          console.log(error);
           this.msgs.push({severity: 'error', summary: MSG_ERROR, detail: error.json().message});
+          this.service.delete(result.id).subscribe(() => {
+
+          }, errorDelete => {
+            console.log(errorDelete);
+            this.msgs.push({severity: 'error', summary: MSG_ERROR, detail: errorDelete.json().message});
+          });
         });
       } else {
         this.goToProductDetails(result.id);
       }
     }, error => {
+      console.log(error);
       this.msgs.push({severity: 'error', summary: MSG_ERROR, detail: error.json().message});
     });
   }

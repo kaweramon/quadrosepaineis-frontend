@@ -1,3 +1,4 @@
+import { ProductFilter } from './../product-filter';
 import { MSG_PRODUCT_DELETED, MSG_SUCCESS } from './../../util/constants-messages';
 import { ModalDeleteProductComponent } from './../modal-delete-product/modal-delete-product.component';
 import { ProductService } from './../product.service';
@@ -5,7 +6,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Product } from '../product';
 import { ISubscription } from 'rxjs/Subscription';
-import { ConfirmationService, Message } from 'primeng/api';
+import { ConfirmationService, Message, LazyLoadEvent } from 'primeng/api';
 import { MessageService } from 'primeng/components/common/messageservice';
 import { MSG_COMPONENT_PRODUCT_CONFIRM_DELETE } from '../../util/constants-messages';
 
@@ -30,6 +31,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   public msgNoRecords = "Nenhum registro encontrado";
 
+  public filter: ProductFilter = new ProductFilter();
+
   constructor(private router: Router, private service: ProductService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService) { }
@@ -41,7 +44,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.modalDeleteProductComponent = new ModalDeleteProductComponent(
       this.service, this.confirmationService);
-    this.search("?isActive=true");
+    // this.search("?isActive=true");
   }
 
   ngOnDestroy(): void {
@@ -53,9 +56,10 @@ export class ProductListComponent implements OnInit, OnDestroy {
     }
   }
 
-  public search(query: string): void {
+  public search(page: number = 0): void {
+    this.filter.page = page;
     this.subs.push(
-      this.service.list(query).subscribe(result => {
+      this.service.resume(this.filter).subscribe(result => {
         console.log(result);
         this.totalRecords = result.totalElements;
         this.products = result.content;
@@ -96,11 +100,9 @@ export class ProductListComponent implements OnInit, OnDestroy {
     }
   }
 
-  public loadData(event: any) {
-    const currentPage = event.first.toString().substr(0, event.first.toString().length - 1);
-    const query: string = currentPage ? "?size=10&page=" + currentPage + "&isActive=true" :
-    "?size=10&page=0&isActive=true";
-    this.search(query);
+  public loadData(event: LazyLoadEvent) {
+    console.log(event);
+    this.search(event.first / event.rows);
   }
 
 }

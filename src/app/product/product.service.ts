@@ -4,6 +4,7 @@ import { Http, Headers, Response, URLSearchParams } from '@angular/http';
 import { Product } from './product';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
+import { ProductFilter } from './product-filter';
 
 @Injectable()
 export class ProductService {
@@ -26,8 +27,12 @@ export class ProductService {
     return this.http.put('http://localhost:8080/products/' + product.id, product).map(this.extractData);
   }
 
-  public list(query: string): Observable<any> {
-    return this.http.get(this.productUrl + query).map(this.extractData);
+  public resume(productFilter: ProductFilter): Observable<any> {
+    const params: URLSearchParams = new URLSearchParams();
+    params.set('size', productFilter.size.toString());
+    params.set('page', productFilter.page.toString());
+    console.log(productFilter);
+    return this.http.get(this.productUrl + "resume", {search: params}).map(this.extractData);
   }
 
   public uploadPhoto(productId: number, photo: File): Observable<any> {
@@ -43,6 +48,10 @@ export class ProductService {
   public updateIsActiveProperty(productId: number, isActive: boolean): Observable<any> {
     return this.http.put('http://localhost:8080/products/' + productId + "/is-active", isActive,
       {headers: this.headers});
+  }
+
+  public delete(productId: number): Observable<any> {
+    return this.http.delete(this.productUrl + productId);
   }
 
   private extractData(res: Response) {

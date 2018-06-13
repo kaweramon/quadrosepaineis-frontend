@@ -20,7 +20,7 @@
   </div>
   <div class="row">
     <div class="col-lg-12">
-      <p-dataView [value]="products" [paginator]="true" [rows]="10" [emptyMessage]="msgNoRecords"
+      <p-dataView [value]="products" [emptyMessage]="msgNoRecords" [paginator]="true" [rows]="10"
         [lazy]="true" (onLazyLoad)="loadData($event)" [totalRecords]="totalRecords">
         <ng-template let-product pTemplate="listItem">
           <div class="row" style="padding: 2em;">
