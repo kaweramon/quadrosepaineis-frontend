@@ -1,23 +1,63 @@
-<p-growl [(value)]="msgs"></p-growl>
+<p-toast></p-toast>
 <div class="container">
 
-  <p-dialog header="{{productSelected?.name}}" [(visible)]="displayDialog" [modal]="true"
-    [responsive]="true">
-    <img src="data:image/PNG;base64,{{productSelected?.photo}}">
+  <p-dialog header="{{productSelected?.name}}" [(visible)]="displayDialog"
+            [draggable]="false" [contentStyle]="{'max-width':'1300px'}">
+    <div class="col-lg-12 col-md-6 col-sm-6">
+      <img *ngIf="productSelected" [src]="productSelected.sanitizeImgUrl">
+    </div>
   </p-dialog>
 
-  <app-modal-delete-product [product]="productSelected" (notify)="onNotify($event)"></app-modal-delete-product>
+  <p-dialog *ngIf="productSelected" [(visible)]="displayDialogDeleteProduct" [modal]="true" width="600">
+    <p-header>
+      Remover Produto
+    </p-header>
+    Tem certeza que deseja remover o produto "{{productSelected.name}}" ?
+    <p-footer>
+      <div class="row">
+        <div class="col-12 pull-right">
+          <button class="btn btn-danger" (click)="displayDialogDeleteProduct = false">
+            <i class="fa fa-stop"></i>&nbsp;Não
+          </button>
+          <button class="btn btn-success" (click)="removeProduct()">
+            <i class="fa fa-check"></i>&nbsp;Sim
+          </button>
+        </div>
+      </div>
+    </p-footer>
+  </p-dialog>
 
   <div class="row">
-    <div class="col-sm-10 col-lg-10">
+    <div class="col-lg-9 col-md-9 col-sm-7 d-flex align-items-start">
       <h1><i class="fa fa-shopping-cart"></i>&nbsp;Produtos</h1>
     </div>
-    <div class="col-sm-2 col-lg-2">
-      <button class="btn btn-primary pull-right" (click)="goToNewProduct()">
+    <div class="col-lg-3 col-md-3 col-sm-5 d-flex align-items-end flex-column bd-highlight align-self-center">
+      <button class="btn btn-primary" (click)="goToNewProduct()">
         <i class="fa fa-plus"></i>&nbsp;Novo
       </button>
     </div>
   </div>
+  <!--Filtrar Pesquisa-->
+  <div class="row">
+    <div class="col-lg-8 col-md-6 col-sm-8 form-group">
+      <label class="form-control-label">Nome</label>
+      <input type="text" class="form-control" [(ngModel)]="filter.name" name="name"
+             (keyup.enter)="search(filter.page)" placeholder="buscar por nome">
+    </div>
+    <div class="col-lg-2 col-md-3 form-group d-sm-none d-md-block">
+      <label class="form-control-label">Preço</label>
+      <input type="text" class="form-control" currencyMask [(ngModel)]="filter.price" name="price"
+             (keyup.enter)="search(filter.page)" placeholder="buscar por preço"
+             [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', allowNegative: false }">
+    </div>
+    <div class="col-lg-2 col-md-3 col-sm-4 form-group">
+      <button class="btn btn-primary pull-right" style="margin-top: 30px;" id="btnSearchProducts" (click)="search(filter.page)">
+        <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>&nbsp;
+        <i class="fa fa-search"></i>&nbsp;Pesquisar
+      </button>
+    </div>
+  </div>
+
   <div class="row">
     <div class="col-lg-12">
       <p-dataView [value]="products" [emptyMessage]="msgNoRecords" [paginator]="true" [rows]="10"
@@ -25,8 +65,10 @@
         <ng-template let-product pTemplate="listItem">
           <div class="row" style="padding: 2em;">
             <div class="col-lg-4 col-sm-4" style="text-align:center; border-bottom: 1px solid #d9d9d9">
-              <img *ngIf="product.photo" (click)=showDialogProductImg(product)
-                src="data:image/PNG;base64,{{product.photo}}" class="img-thumbnail">
+              <!--<img *ngIf="product.photo" (click)=showDialogProductImg(product)
+                src="data:image/JPG;base64,{{product.photo}}" class="img-thumbnail">-->
+              <img *ngIf="product.photo"  (click)=showDialogProductImg(product)
+                   class="img-thumbnail" [src]="product.sanitizeImgUrl">
             </div>
             <div class="col-lg-6 col-sm-6" style="border-bottom: 1px solid #d9d9d9">
               <div class="row">
@@ -42,7 +84,7 @@
                   Preço:
                 </div>
                 <div class="col-lg-9">
-                  <b>{{product.price}}</b>
+                  <b>{{product.price | currency:'BRL':'1.2-2'}}</b>
                 </div>
               </div>
             </div>

@@ -4,7 +4,9 @@ import { ProductService } from '../product.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ISubscription } from 'rxjs/Subscription';
 import { ModalDeleteProductComponent } from '../modal-delete-product/modal-delete-product.component';
-import { ConfirmationService } from 'primeng/api';
+import {ConfirmationService, MessageService} from 'primeng/api';
+import {MSG_ERROR} from "../../util/constants-messages";
+import {HandlerErrorMessage} from "../../util/handler-error-message";
 
 @Component({
   selector: 'app-product-details',
@@ -19,9 +21,11 @@ export class ProductDetailsComponent implements OnInit {
 
   public modalDeleteProductComponent: ModalDeleteProductComponent;
 
+  private errorHandler: HandlerErrorMessage = new HandlerErrorMessage();
+
   constructor(private productService: ProductService, private activatedRoute: ActivatedRoute,
     private confirmationService: ConfirmationService,
-    private router: Router) { }
+    private router: Router, private messageService: MessageService) { }
 
   ngOnInit() {
     this.modalDeleteProductComponent = new ModalDeleteProductComponent(
@@ -31,10 +35,10 @@ export class ProductDetailsComponent implements OnInit {
       if (typeof productId !== 'undefined' && productId !== null) {
         this.subs.push(
           this.productService.view(productId).subscribe(product => {
-            console.log(product);
             this.product = product;
           }, error => {
-            console.log(error);
+            this.messageService.add({severity: 'error', summary: MSG_ERROR,
+              detail: this.errorHandler.getErrorMessage(error)});
           })
         );
       }

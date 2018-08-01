@@ -5,6 +5,10 @@ const routes: Routes = [
   {
     path: 'products',
     loadChildren: 'app/product/product.module#ProductModule'
+  },
+  {
+    path: 'categories',
+    loadChildren: 'app/category/category.module#CategoryModule'
   }
 ];
 

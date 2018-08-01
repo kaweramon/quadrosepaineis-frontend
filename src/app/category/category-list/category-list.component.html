@@ -1,0 +1,56 @@
+<p-dialog header="Deletar Categoria" [(visible)]="displayModalDeleteCategory" *ngIf="categoryToDelete">
+  Tem certeza que deseja remover a categoria "{{categoryToDelete.name}}" ?
+  <p-footer>
+    <div class="row">
+      <div class="col-12 pull-right">
+        <button class="btn btn-default" (click)="displayModalDeleteCategory = false">
+          <i class="fa fa-times"></i>&nbsp;Fechar
+        </button>
+        <button class="btn btn-danger" (click)="removeCategory()">Remover</button>
+      </div>
+    </div>
+  </p-footer>
+</p-dialog>
+
+<p-toast></p-toast>
+<div class="container">
+  <div class="row">
+    <div class="col-9 d-flex align-items-start">
+      <h1>Categorias</h1>
+    </div>
+    <div class="col-3 d-flex align-items-end flex-column bd-highlight align-self-center">
+      <button class="btn btn-primary pull-right" (click)="goToNewCategory()">
+        <i class="fa fa-plus"></i>&nbsp;Nova
+      </button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <p-table [value]="categories">
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="col-1 text-center">Cód.</th>
+            <th class="col-9 text-left">Nome</th>
+            <th class="col-2 text-center">&nbsp;</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-category>
+          <tr>
+            <td class="col-1 text-center">{{category.id}}</td>
+            <td class="col-9 text-left">{{category.name}}</td>
+            <td class="col-2 text-center">
+              <button class="btn btn-primary" pTooltip="Editar" tooltipPosition="top"
+                      (click)="goToEditCategory(category.id)">
+                <i class="fa fa-edit"></i>
+              </button>
+              <button class="btn btn-danger" pTooltip="Remover" tooltipPosition="right"
+                      (click)="showModalDeleteCategory(category)">
+                <i class="fa fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>

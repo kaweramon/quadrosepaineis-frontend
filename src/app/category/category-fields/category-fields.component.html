@@ -1,0 +1,19 @@
+<form [formGroup]="categoryForm" *ngIf="category && categoryForm">
+  <div class="row">
+    <div class="col-12 form-group">
+      <label class="form-control-label">Nome</label>&nbsp;<i style="color: red">*</i>
+      <input type="text" class="form-control" [ngClass]="{'is-invalid':
+              categoryForm.get('name').invalid && categoryForm.get('name').dirty}"
+             [(ngModel)]="category.name" name="name" formControlName="name"
+              (keyup.enter)="sendEventKeyPressed()">
+      <app-validation-message [control]="categoryForm.get('name')" errorType="required"
+        message="Nome é obrigatório"></app-validation-message>
+
+      <app-validation-message [control]="categoryForm.get('name')" errorType="minlength"
+        message="Nome deve conter no mínimo 3 caracteres"></app-validation-message>
+
+      <app-validation-message [control]="categoryForm.get('name')" errorType="maxlength"
+                              message="Nome deve conter no máximo 20 caracteres"></app-validation-message>
+    </div>
+  </div>
+</form>

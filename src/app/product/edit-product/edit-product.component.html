@@ -1,18 +1,18 @@
 <div class="container" *ngIf="product && productForm">
-  <p-growl [(value)]="msgs"></p-growl>
+  <p-toast></p-toast>
   <div class="row">
     <div class="col-lg-12 col-md-12">
       <h1>Editar Produto</h1>
     </div>
   </div>
-  <app-product-fields (notify)="onNotify($event)" [product]="product" [productForm]="productForm"></app-product-fields>
+  <app-product-fields (notify)="onNotify($event)" [productForm]="productForm" [product]="product"></app-product-fields>
   <!-- TODO: Criar componente global -->
   <div class="row">
-    <div class="col-sm-12 pull-right">
-      <button class="btn btn-default">
+    <div class="col-sm-12 text-right">
+      <button class="btn btn-default" (click)="cleanForm()">
         <i class="fa fa-eraser"></i>&nbsp;Limpar
       </button>
-      <button class="btn btn-danger">
+      <button class="btn btn-danger" (click)="cancelForm()">
         <i class="fa fa-stop"></i>&nbsp;Cancelar
       </button>
       <button class="btn btn-success" [disabled]="productForm.invalid" (click)="update()">

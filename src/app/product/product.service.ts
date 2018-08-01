@@ -15,38 +15,45 @@ export class ProductService {
     'Content-Type': 'application/json'
   });
 
-  private params: URLSearchParams = new URLSearchParams();
-
   constructor(private http: Http) { }
 
   public save(product: Product): Observable<Product> {
-    return this.http.post('http://localhost:8080/products', product).map(this.extractData);
+    return this.http.post(this.productUrl, product).map(this.extractData);
   }
 
   public update(product: Product): Observable<any> {
-    return this.http.put('http://localhost:8080/products/' + product.id, product).map(this.extractData);
+    return this.http.put(this.productUrl + product.id, product).map(this.extractData);
   }
 
   public resume(productFilter: ProductFilter): Observable<any> {
     const params: URLSearchParams = new URLSearchParams();
     params.set('size', productFilter.size.toString());
     params.set('page', productFilter.page.toString());
-    console.log(productFilter);
+
+    if (productFilter.name)
+      params.set('name', productFilter.name);
+
+    if (productFilter.price)
+      params.set('price', productFilter.price.toString());
+
+    if (productFilter.isActive)
+      params.set('isActive', productFilter.isActive.toString());
+
     return this.http.get(this.productUrl + "resume", {search: params}).map(this.extractData);
   }
 
   public uploadPhoto(productId: number, photo: File): Observable<any> {
     const formData: FormData = new FormData();
     formData.append('photo', photo);
-    return this.http.put('http://localhost:8080/products/' + productId + '/upload', formData);
+    return this.http.put(this.productUrl + productId + '/upload', formData);
   }
 
   public view(productId: any): Observable<Product> {
-    return this.http.get('http://localhost:8080/products/' + productId).map(this.extractData);
+    return this.http.get(this.productUrl + productId).map(this.extractData);
   }
 
   public updateIsActiveProperty(productId: number, isActive: boolean): Observable<any> {
-    return this.http.put('http://localhost:8080/products/' + productId + "/is-active", isActive,
+    return this.http.put(this.productUrl + productId + "/is-active", isActive,
       {headers: this.headers});
   }
 

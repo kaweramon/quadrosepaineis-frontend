@@ -1,14 +1,20 @@
-import { MSG_PRODUCT_CREATED, MSG_ERROR } from './../../util/constants-messages';
-import { MSG_CP_PHOTO_CHANGED } from './../../util/msg-components';
-import { Component, OnInit } from '@angular/core';
-import { Product } from '../product';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { InitFormGroupUtil } from '../../util/init-form-group-util';
-import { ProductService } from '../product.service';
-import {Message} from 'primeng/components/common/api';
+import {
+  MSG_CATEGORY_CREATED,
+  MSG_COMPONENT_CATEGORY_CREATED,
+  MSG_COMPONENT_ERROR,
+  MSG_ERROR,
+  MSG_PRODUCT_CREATED
+} from './../../util/constants-messages';
+import {MSG_CP_PHOTO_CHANGED} from './../../util/msg-components';
+import {Component, OnInit} from '@angular/core';
+import {Product} from '../product';
+import {ProductService} from '../product.service';
 import {MessageService} from 'primeng/components/common/messageservice';
-import { MSG_SUCCESS } from '../../util/constants-messages';
-import { Router } from '@angular/router';
+import {MSG_SUCCESS} from '../../util/constants-messages';
+import {Router} from '@angular/router';
+import {FormGroup} from "@angular/forms";
+import {InitFormGroupService} from "../../util/init-form-group.service";
+import {HandlerErrorMessage} from "../../util/handler-error-message";
 
 @Component({
   selector: 'app-create-product',
@@ -19,43 +25,42 @@ export class CreateProductComponent implements OnInit {
 
   public product: Product;
 
-  public productForm: FormGroup;
-
   private photo: File;
 
-  public msgs: Message[] = [];
+  public productForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, private service: ProductService,
+  public errorHandler: HandlerErrorMessage = new HandlerErrorMessage();
+
+  constructor(private service: ProductService,
+    private initFormGroupService: InitFormGroupService,
     private messageService: MessageService, private router: Router) { }
 
   ngOnInit() {
     this.product = new Product();
-    this.productForm = InitFormGroupUtil.getFormGroupProduct(this.product, this.formBuilder);
+    this.productForm = this.initFormGroupService.getFormGroupProduct(this.product);
   }
 
   public save(): void {
-    this.msgs = [];
     this.service.save(this.product).subscribe(result => {
-      this.msgs.push({severity: 'success', summary: MSG_SUCCESS, detail: MSG_PRODUCT_CREATED});
+      this.messageService.add({severity: 'success', summary: MSG_SUCCESS, detail: MSG_PRODUCT_CREATED});
+      this.productForm.reset();
       if (this.photo !== null && this.photo !== undefined) {
         this.service.uploadPhoto(result.id, this.photo).subscribe(() => {
-          this.goToProductDetails(result.id);
         }, error => {
-          console.log(error);
-          this.msgs.push({severity: 'error', summary: MSG_ERROR, detail: error.json().message});
+          this.messageService.add({severity: 'error',
+            summary: MSG_ERROR, detail: this.errorHandler.getErrorMessage(error)});
           this.service.delete(result.id).subscribe(() => {
 
           }, errorDelete => {
-            console.log(errorDelete);
-            this.msgs.push({severity: 'error', summary: MSG_ERROR, detail: errorDelete.json().message});
+            this.messageService.add({severity: 'error', summary: MSG_ERROR,
+              detail: this.errorHandler.getErrorMessage(errorDelete)});
           });
         });
       } else {
         this.goToProductDetails(result.id);
       }
     }, error => {
-      console.log(error);
-      this.msgs.push({severity: 'error', summary: MSG_ERROR, detail: error.json().message});
+      this.messageService.add({severity: 'error', summary: MSG_ERROR, detail: this.errorHandler.getErrorMessage(error)});
     });
   }
 
@@ -63,6 +68,15 @@ export class CreateProductComponent implements OnInit {
     switch (event.msg) {
       case MSG_CP_PHOTO_CHANGED:
         this.photo = event.photo;
+        break;
+      case MSG_COMPONENT_CATEGORY_CREATED:
+        // this.msgs.push({severity: 'success', summary: MSG_SUCCESS, detail: MSG_CATEGORY_CREATED});
+        this.messageService.add({severity: 'success', summary: MSG_SUCCESS, detail: MSG_CATEGORY_CREATED});
+        break;
+      case MSG_COMPONENT_ERROR:
+        this.messageService.add({severity: 'error', summary: MSG_ERROR,
+          detail: this.errorHandler.getErrorMessage(event.error)});
+        break;
     }
   }
 

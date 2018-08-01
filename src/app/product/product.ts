@@ -1,8 +1,11 @@
+import {Category} from "../category/category";
+
 export class Product {
   public id: number;
   public name: string;
   public price: number;
   public description: string;
+  public registerDate: any;
   public registerDateStr: string;
   public width: number;
   public height: number;
@@ -10,4 +13,11 @@ export class Product {
   public weight: number;
   public isActive: boolean;
   public photo: File;
+  public categories: Category[];
+  public sanitizeImgUrl: any;
+
+  constructor() {
+    this.isActive = true;
+  }
+
 }

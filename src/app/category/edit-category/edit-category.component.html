@@ -1,0 +1,20 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <h1>Alterar Categoria</h1>
+    </div>
+  </div>
+  <app-category-fields [categoryForm]="categoryForm" [category]="category"></app-category-fields>
+  <div class="row">
+    <div class="col-sm-12 text-right">
+      <button class="btn btn-default" (click)="clearCategoryForm()">
+        <i class="fa fa-eraser"></i>&nbsp;Limpar
+      </button>
+      <button class="btn btn-danger" (click)="cancelFormCategory();">
+        <i class="fa fa-stop"></i>&nbsp;Cancelar
+      </button>
+      <button class="btn btn-success" (click)="update()" [disabled]="categoryForm.invalid">
+        <i class="fa fa-save"></i>&nbsp;Salvar
+      </button>
+    </div>
+</div>

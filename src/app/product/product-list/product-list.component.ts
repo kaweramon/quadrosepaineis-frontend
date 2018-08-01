@@ -1,41 +1,47 @@
-import { ProductFilter } from './../product-filter';
-import { MSG_PRODUCT_DELETED, MSG_SUCCESS } from './../../util/constants-messages';
-import { ModalDeleteProductComponent } from './../modal-delete-product/modal-delete-product.component';
-import { ProductService } from './../product.service';
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
-import { Product } from '../product';
-import { ISubscription } from 'rxjs/Subscription';
-import { ConfirmationService, Message, LazyLoadEvent } from 'primeng/api';
-import { MessageService } from 'primeng/components/common/messageservice';
-import { MSG_COMPONENT_PRODUCT_CONFIRM_DELETE } from '../../util/constants-messages';
+import {ProductFilter} from './../product-filter';
+import {MSG_ERROR, MSG_PRODUCT_DELETED, MSG_SUCCESS} from './../../util/constants-messages';
+import {ModalDeleteProductComponent} from './../modal-delete-product/modal-delete-product.component';
+import {ProductService} from './../product.service';
+import {AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
+import {Product} from '../product';
+import {ISubscription} from 'rxjs/Subscription';
+import {ConfirmationService, LazyLoadEvent} from 'primeng/api';
+import {MessageService} from 'primeng/components/common/messageservice';
+import {DomSanitizer} from "@angular/platform-browser";
+import {HandlerErrorMessage} from "../../util/handler-error-message";
+import * as $ from "jquery";
 
 @Component({
   selector: 'app-product-list',
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
-export class ProductListComponent implements OnInit, OnDestroy {
+export class ProductListComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public products: Product[] = [];
 
   public productSelected: Product;
 
-  public displayDialog = false;
+  public displayDialog: boolean = false;
 
-  public displayModalDeleteProduct = false;
+  public displayDialogDeleteProduct = false;
 
   public modalDeleteProductComponent: ModalDeleteProductComponent;
-
-  public msgs: Message[] = [];
 
   public msgNoRecords = "Nenhum registro encontrado";
 
   public filter: ProductFilter = new ProductFilter();
 
+  public errorHandler: HandlerErrorMessage = new HandlerErrorMessage();
+
+  public loading: boolean = false;
+
   constructor(private router: Router, private service: ProductService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService) { }
+    private messageService: MessageService,
+    private sanitizer: DomSanitizer,
+    private changeRef: ChangeDetectorRef) { }
 
   subs: ISubscription[] = [];
 
@@ -44,7 +50,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.modalDeleteProductComponent = new ModalDeleteProductComponent(
       this.service, this.confirmationService);
-    // this.search("?isActive=true");
   }
 
   ngOnDestroy(): void {
@@ -58,15 +63,36 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   public search(page: number = 0): void {
     this.filter.page = page;
+    this.loading = true;
+    $("#btnSearchProducts").prop("disabled", "disabled");
+    $("input").prop("disabled", "disabled");
     this.subs.push(
       this.service.resume(this.filter).subscribe(result => {
-        console.log(result);
         this.totalRecords = result.totalElements;
         this.products = result.content;
+        this.loadSanitizeImgUrl();
+        this.stopLoading();
       }, error => {
-        console.log(error);
+        this.stopLoading();
+        this.messageService.add({severity: 'error', summary: MSG_ERROR,
+          detail: this.errorHandler.getErrorMessage(error)});
       })
     );
+  }
+
+  private stopLoading(): void {
+    this.loading = false;
+    $("#btnSearchProducts").prop("disabled", false);
+    $("input").prop("disabled", false);
+  }
+
+  public loadSanitizeImgUrl(): void {
+    this.products.forEach(product => {
+      if (product.photo) {
+        product.sanitizeImgUrl =
+          this.sanitizer.bypassSecurityTrustResourceUrl("data:image/jpeg;base64," + product.photo);
+      }
+    });
   }
 
   public goToNewProduct(): void {
@@ -83,26 +109,35 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   public showDialogProductImg(product: Product): void {
     this.productSelected = product;
+    this.productSelected.sanitizeImgUrl =
+      this.sanitizer.bypassSecurityTrustResourceUrl("data:image/jpeg;base64," + product.photo);
     this.displayDialog = true;
   }
 
   public showModalDeleteProduct(product: Product): void {
     this.productSelected = product;
-    this.modalDeleteProductComponent.showModal(product);
-  }
-
-  public onNotify(event: any): void {
-    console.log(event);
-    switch (event.msg) {
-      case MSG_COMPONENT_PRODUCT_CONFIRM_DELETE:
-        this.msgs.push({severity: 'success', summary: MSG_SUCCESS, detail: MSG_PRODUCT_DELETED});
-        break;
-    }
+    this.displayDialogDeleteProduct = true;
   }
 
   public loadData(event: LazyLoadEvent) {
-    console.log(event);
     this.search(event.first / event.rows);
+  }
+
+  public removeProduct(): void {
+    this.subs.push(
+      this.service.delete(this.productSelected.id).subscribe(() => {
+        this.messageService.add({severity: 'success', summary: MSG_SUCCESS, detail: MSG_PRODUCT_DELETED});
+        this.search(this.filter.page);
+        this.displayDialogDeleteProduct = false;
+      }, error => {
+        this.messageService.add({severity: 'error', summary: MSG_ERROR,
+          detail: this.errorHandler.getErrorMessage(error)});
+      })
+    );
+  }
+
+  ngAfterViewInit(): void {
+    this.changeRef.detectChanges();
   }
 
 }
