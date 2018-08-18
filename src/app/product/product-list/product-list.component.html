@@ -4,11 +4,11 @@
   <p-dialog header="{{productSelected?.name}}" [(visible)]="displayDialog"
             [draggable]="false" [contentStyle]="{'max-width':'1300px'}">
     <div class="col-lg-12 col-md-6 col-sm-6">
-      <img *ngIf="productSelected" [src]="productSelected.sanitizeImgUrl">
+      <img class="img-fluid" *ngIf="productSelected" [src]="productSelected.sanitizeImgUrl">
     </div>
   </p-dialog>
 
-  <p-dialog *ngIf="productSelected" [(visible)]="displayDialogDeleteProduct" [modal]="true" width="600">
+  <p-dialog *ngIf="productSelected" [(visible)]="displayDialogDeleteProduct" [modal]="true">
     <p-header>
       Remover Produto
     </p-header>
@@ -39,35 +39,62 @@
   </div>
   <!--Filtrar Pesquisa-->
   <div class="row">
-    <div class="col-lg-8 col-md-6 col-sm-8 form-group">
-      <label class="form-control-label">Nome</label>
-      <input type="text" class="form-control" [(ngModel)]="filter.name" name="name"
-             (keyup.enter)="search(filter.page)" placeholder="buscar por nome">
-    </div>
-    <div class="col-lg-2 col-md-3 form-group d-sm-none d-md-block">
-      <label class="form-control-label">Preço</label>
-      <input type="text" class="form-control" currencyMask [(ngModel)]="filter.price" name="price"
-             (keyup.enter)="search(filter.page)" placeholder="buscar por preço"
-             [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', allowNegative: false }">
-    </div>
-    <div class="col-lg-2 col-md-3 col-sm-4 form-group">
-      <button class="btn btn-primary pull-right" style="margin-top: 30px;" id="btnSearchProducts" (click)="search(filter.page)">
-        <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>&nbsp;
-        <i class="fa fa-search"></i>&nbsp;Pesquisar
-      </button>
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header" id="headingOne" (click)="showCardProductFilters()">
+          <h5 class="mb-0">
+            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseProductFilters"
+                    aria-expanded="true" aria-controls="collapseProductFilters">
+              Filtrar Pesquisa
+            </button>
+          </h5>
+        </div>
+        <div id="collapseProductFilters" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-lg-8 col-md-6 col-sm-8 form-group">
+                <label class="form-control-label">Nome</label>
+                <input type="text" class="form-control" [(ngModel)]="filter.name" name="name"
+                       (keyup.enter)="search(filter.page)" placeholder="buscar por nome">
+              </div>
+              <div class="col-lg-2 col-md-3 form-group d-sm-none d-md-block">
+                <label class="form-control-label">Preço</label>
+                <input type="text" class="form-control" currencyMask [(ngModel)]="filter.price" name="price"
+                       (keyup.enter)="search(filter.page)" placeholder="buscar por preço"
+                       [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', allowNegative: false }">
+              </div>
+              <div class="col-lg-2 col-md-3 col-sm-4 form-group">
+                <button class="btn btn-primary pull-right" style="margin-top: 30px;" id="btnSearchProducts" (click)="search(filter.page)">
+                  <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>&nbsp;
+                  <i class="fa fa-search"></i>&nbsp;Pesquisar
+                </button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 form-group">
+                <p-autoComplete [suggestions]="categories" field="name"
+                                (onSelect)="onSelectAutoCompleteCategories($event)"
+                                (onUnselect)="onUnselectAutoCompleteCategories($event)"
+                                placeholder="Buscar por categorias"
+                                (completeMethod)="filterCategoryMultiple($event)" [multiple]="true">
+
+                </p-autoComplete>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="row">
-    <div class="col-lg-12">
+    <div class="col-12">
       <p-dataView [value]="products" [emptyMessage]="msgNoRecords" [paginator]="true" [rows]="10"
-        [lazy]="true" (onLazyLoad)="loadData($event)" [totalRecords]="totalRecords">
+      [lazy]="true" (onLazyLoad)="loadData($event)" [totalRecords]="totalRecords">
         <ng-template let-product pTemplate="listItem">
-          <div class="row" style="padding: 2em;">
+          <div class="row" style="padding: 2em;" [@productAppeared]="productState">
             <div class="col-lg-4 col-sm-4" style="text-align:center; border-bottom: 1px solid #d9d9d9">
-              <!--<img *ngIf="product.photo" (click)=showDialogProductImg(product)
-                src="data:image/JPG;base64,{{product.photo}}" class="img-thumbnail">-->
-              <img *ngIf="product.photo"  (click)=showDialogProductImg(product)
+              <img *ngIf="product.photo" (click)=showDialogProductImg(product)
                    class="img-thumbnail" [src]="product.sanitizeImgUrl">
             </div>
             <div class="col-lg-6 col-sm-6" style="border-bottom: 1px solid #d9d9d9">
@@ -90,15 +117,15 @@
             </div>
             <div class="col-lg-2 col-sm-2" style="border-bottom: 1px solid #d9d9d9">
               <button class="btn btn-default" pTooltip="Detalhes" tooltipPosition="left"
-                (click)="goToProductDetails(product.id)">
+                      [routerLink]="['/products/details', product.id]">
                 <i class="fa fa-search"></i>
               </button>
               <button class="btn btn-primary" pTooltip="Editar" tooltipPosition="top"
-                (click)="goToEditProduct(product.id)">
+                      [routerLink]="['/products/edit', product.id]">
                 <i class="fa fa-edit"></i>
               </button>
               <button class="btn btn-danger" pTooltip="Remover" tooltipPosition="right"
-                (click)="showModalDeleteProduct(product)">
+                      (click)="showModalDeleteProduct(product)">
                 <i class="fa fa-trash"></i>
               </button>
             </div>

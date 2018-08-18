@@ -15,6 +15,7 @@ import {Router} from '@angular/router';
 import {FormGroup} from "@angular/forms";
 import {InitFormGroupService} from "../../util/init-form-group.service";
 import {HandlerErrorMessage} from "../../util/handler-error-message";
+import * as $ from "jquery";
 
 @Component({
   selector: 'app-create-product',
@@ -31,6 +32,8 @@ export class CreateProductComponent implements OnInit {
 
   public errorHandler: HandlerErrorMessage = new HandlerErrorMessage();
 
+  public loading: boolean = false;
+
   constructor(private service: ProductService,
     private initFormGroupService: InitFormGroupService,
     private messageService: MessageService, private router: Router) { }
@@ -40,26 +43,52 @@ export class CreateProductComponent implements OnInit {
     this.productForm = this.initFormGroupService.getFormGroupProduct(this.product);
   }
 
-  public save(): void {
+  public save(productFields: any): void {
+    if (this.loading)
+      return;
+    this.loading = true;
+    $("#btnSaveProduct").prop("disabled", "disabled");
+    let gallery: any[] = [];
+    if (this.product.gallery) {
+      gallery = this.product.gallery;
+      this.product.gallery = undefined;
+    }
     this.service.save(this.product).subscribe(result => {
-      this.messageService.add({severity: 'success', summary: MSG_SUCCESS, detail: MSG_PRODUCT_CREATED});
-      this.productForm.reset();
+
       if (this.photo !== null && this.photo !== undefined) {
         this.service.uploadPhoto(result.id, this.photo).subscribe(() => {
+          this.stopLoading();
+          this.productForm.reset();
+          this.messageService.add({severity: 'success', summary: MSG_SUCCESS, detail: MSG_PRODUCT_CREATED});
         }, error => {
+          this.stopLoading();
           this.messageService.add({severity: 'error',
             summary: MSG_ERROR, detail: this.errorHandler.getErrorMessage(error)});
           this.service.delete(result.id).subscribe(() => {
 
           }, errorDelete => {
+            this.stopLoading();
             this.messageService.add({severity: 'error', summary: MSG_ERROR,
               detail: this.errorHandler.getErrorMessage(errorDelete)});
           });
         });
       } else {
-        this.goToProductDetails(result.id);
+        this.productForm.reset();
+        this.messageService.add({severity: 'success', summary: MSG_SUCCESS, detail: MSG_PRODUCT_CREATED});
+        this.stopLoading();
+      }
+      if (gallery) {
+        console.log(gallery);
+        this.service.uploadGallery(result.id, gallery).subscribe(() => {
+          productFields.resetGallery();
+        }, error => {
+          this.stopLoading();
+          this.messageService.add({severity: 'error', summary: MSG_ERROR,
+            detail: this.errorHandler.getErrorMessage(error)});
+        });
       }
     }, error => {
+      this.stopLoading();
       this.messageService.add({severity: 'error', summary: MSG_ERROR, detail: this.errorHandler.getErrorMessage(error)});
     });
   }
@@ -85,8 +114,9 @@ export class CreateProductComponent implements OnInit {
     this.product = new Product();
   }
 
-  private goToProductDetails(productId: number): void {
-    this.router.navigate(['/products/details', {id: productId}]);
+  private stopLoading(): void {
+    this.loading = false;
+    $("#btnSaveProduct").prop("disabled", false);
   }
 
 }

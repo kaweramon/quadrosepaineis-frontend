@@ -7,6 +7,7 @@ import { ModalDeleteProductComponent } from '../modal-delete-product/modal-delet
 import {ConfirmationService, MessageService} from 'primeng/api';
 import {MSG_ERROR} from "../../util/constants-messages";
 import {HandlerErrorMessage} from "../../util/handler-error-message";
+import {URL_API} from "../../util/url-api";
 
 @Component({
   selector: 'app-product-details',
@@ -23,6 +24,8 @@ export class ProductDetailsComponent implements OnInit {
 
   private errorHandler: HandlerErrorMessage = new HandlerErrorMessage();
 
+  public images: any[] = [];
+
   constructor(private productService: ProductService, private activatedRoute: ActivatedRoute,
     private confirmationService: ConfirmationService,
     private router: Router, private messageService: MessageService) { }
@@ -36,6 +39,11 @@ export class ProductDetailsComponent implements OnInit {
         this.subs.push(
           this.productService.view(productId).subscribe(product => {
             this.product = product;
+            if (product.galleryPaths) {
+              for (let i = 1; i <= product.galleryPaths.length; i++) {
+                this.images.push({source: `${URL_API}products/image-resource/${product.id}/${i}`});
+              }
+            }
           }, error => {
             this.messageService.add({severity: 'error', summary: MSG_ERROR,
               detail: this.errorHandler.getErrorMessage(error)});
@@ -54,7 +62,7 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   public goToEditProduct(): void {
-    this.router.navigate(['/products/edit', {id: this.product.id}]);
+    this.router.navigate(['/products/edit', this.product.id]);
   }
 
 }

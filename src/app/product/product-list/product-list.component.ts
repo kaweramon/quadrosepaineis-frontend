@@ -11,13 +11,27 @@ import {MessageService} from 'primeng/components/common/messageservice';
 import {DomSanitizer} from "@angular/platform-browser";
 import {HandlerErrorMessage} from "../../util/handler-error-message";
 import * as $ from "jquery";
+import {Category} from "../../category/category";
+import {CategoryService} from "../../category/category.service";
+import {animate, state, style, transition, trigger} from "@angular/animations";
 
 @Component({
   selector: 'app-product-list',
   templateUrl: './product-list.component.html',
-  styleUrls: ['./product-list.component.css']
+  styleUrls: ['./product-list.component.css'],
+  animations: [
+    trigger("productAppeared", [
+      state("ready", style({opacity: 1})),
+      transition("void => ready", [
+        style({opacity: 0, transform: 'translate(-30px, -10px)'}),
+        animate('1000ms 0s ease-in-out')
+      ])
+    ])
+  ]
 })
 export class ProductListComponent implements OnInit, OnDestroy, AfterViewInit {
+
+  public productState: string = "ready";
 
   public products: Product[] = [];
 
@@ -37,15 +51,20 @@ export class ProductListComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public loading: boolean = false;
 
-  constructor(private router: Router, private service: ProductService,
-    private confirmationService: ConfirmationService,
-    private messageService: MessageService,
-    private sanitizer: DomSanitizer,
-    private changeRef: ChangeDetectorRef) { }
+  public categories: Category[] = [];
 
   subs: ISubscription[] = [];
 
   public totalRecords: number = 0;
+
+  public categoriesSelected: Array<Category> = [];
+
+  constructor(private router: Router, private service: ProductService,
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService,
+    private sanitizer: DomSanitizer,
+    private changeRef: ChangeDetectorRef,
+    private categoryService: CategoryService) { }
 
   ngOnInit() {
     this.modalDeleteProductComponent = new ModalDeleteProductComponent(
@@ -59,6 +78,10 @@ export class ProductListComponent implements OnInit, OnDestroy, AfterViewInit {
         sub.unsubscribe();
       });
     }
+  }
+
+  ngAfterViewInit(): void {
+    this.changeRef.detectChanges();
   }
 
   public search(page: number = 0): void {
@@ -99,14 +122,6 @@ export class ProductListComponent implements OnInit, OnDestroy, AfterViewInit {
     this.router.navigate(['/products/add']);
   }
 
-  public goToEditProduct(productId: number): void {
-    this.router.navigate(['/products/edit', {id: productId}]);
-  }
-
-  public goToProductDetails(productId: number): void {
-    this.router.navigate(['/products/details', {id: productId}]);
-  }
-
   public showDialogProductImg(product: Product): void {
     this.productSelected = product;
     this.productSelected.sanitizeImgUrl =
@@ -136,8 +151,49 @@ export class ProductListComponent implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
-  ngAfterViewInit(): void {
-    this.changeRef.detectChanges();
+  filterCategory(query, categories: any[]): any[] {
+    const filtered: any[] = [];
+    console.log(categories);
+    for (let i = 0; i < categories.length; i++) {
+      const category = categories[i];
+      if (category.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
+        filtered.push(category);
+      }
+    }
+    return filtered;
+  }
+
+  public filterCategoryMultiple(event) {
+    const query = event.query;
+    this.subs.push(
+      this.categoryService.list().subscribe(result => {
+        this.categories = this.filterCategory(query, result);
+      }, error => {
+        this.messageService.add({severity: 'error', summary: MSG_ERROR,
+          detail: this.errorHandler.getErrorMessage(error)});
+      })
+    );
+  }
+
+  public onSelectAutoCompleteCategories(event): void {
+    console.log(this.categoriesSelected);
+    this.filter.categories.push(event.id);
+    this.search(this.filter.page);
+    /*this.filter.categories.push(event.id);
+    */
+  }
+
+  public onUnselectAutoCompleteCategories(event): void {
+    this.filter.categories.splice(this.filter.categories.indexOf(event.id), 1);
+    this.search(this.filter.page);
+  }
+
+  public showCardProductFilters(): void {
+    const cardColappse = $("#collapseProductFilters");
+    if (cardColappse.hasClass("show"))
+      cardColappse.removeClass("show");
+    else
+      cardColappse.addClass("show");
   }
 
 }

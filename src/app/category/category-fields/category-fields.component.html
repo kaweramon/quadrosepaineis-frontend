@@ -5,7 +5,7 @@
       <input type="text" class="form-control" [ngClass]="{'is-invalid':
               categoryForm.get('name').invalid && categoryForm.get('name').dirty}"
              [(ngModel)]="category.name" name="name" formControlName="name"
-              (keyup.enter)="sendEventKeyPressed()">
+              (keyup.enter)="sendEventKeyPressed()" id="inputCategoryName">
       <app-validation-message [control]="categoryForm.get('name')" errorType="required"
         message="Nome é obrigatório"></app-validation-message>
 

@@ -7,13 +7,31 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav">
-      <li class="nav-item active" id="menu-item-PRODUCTS">
+      <!--<li class="nav-item" routerLinkActive="active">
+        <a class="nav-link" [routerLink]="['/']">
+          Início <span class="sr-only">(current)</span>
+        </a>
+      </li>-->
+      <li class="nav-item" routerLinkActive="active" id="menu-item-PRODUCTS">
         <a class="nav-link" [routerLink]="['/products']">
-          Produtos <span class="sr-only">(current)</span>
+          Produtos
         </a>
       </li>
-      <li class="nav-item" id="menu-item-CATEGORIES">
+      <li class="nav-item" routerLinkActive="active" id="menu-item-CATEGORIES">
         <a class="nav-link" [routerLink]="['/categories']">Categorias</a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="navbar-custom-menu">
+    <ul class="nav navbar-nav">
+      <li class="user user-menu">
+        <span *ngIf="isLoggedIn(); else isNotLooged">
+          Olá, {{user?.name}} | <a>Sair</a>
+        </span>
+        <ng-template #isNotLooged>
+          <a [routerLink]="['/login']">Entrar</a>
+        </ng-template>
       </li>
     </ul>
   </div>

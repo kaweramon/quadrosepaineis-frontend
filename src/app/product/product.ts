@@ -13,11 +13,14 @@ export class Product {
   public weight: number;
   public isActive: boolean;
   public photo: File;
+  public gallery: any[];
   public categories: Category[];
   public sanitizeImgUrl: any;
+  public galleryPaths: string[];
 
   constructor() {
     this.isActive = true;
+    this.gallery = [];
   }
 
 }

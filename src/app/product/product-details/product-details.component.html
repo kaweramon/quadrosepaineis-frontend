@@ -30,25 +30,25 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-sm-4 col-lg-4" *ngIf="product.width">
+        <div class="col-sm-6 col-lg-6" *ngIf="product.width">
           <h6>
             <i class="fa fa-arrows-h"></i> Largura
           </h6>
           <p>{{product.width}}</p>
         </div>
-        <div class="col-sm-4 col-lg-4" *ngIf="product.height">
+        <div class="col-sm-6 col-lg-6" *ngIf="product.height">
           <h6>
             <i class="fa fa-arrows-v"></i> Altura
           </h6>
           <p>{{product.height}}</p>
         </div>
-        <div class="col-sm-4 col-lg-4" *ngIf="product.diameter">
+      </div>
+      <div class="row">
+        <div class="col-sm-6 col-lg-6" *ngIf="product.diameter">
           <h6>Diâmetro</h6>
           <p>{{product.diameter}}</p>
         </div>
-      </div>
-      <div class="row" *ngIf="product.weight">
-        <div class="col-sm-12">
+        <div class="col-sm-6 col-lg-6" *ngIf="product.weight">
           <h6>
             <i class="fa fa-balance-scale"></i> Peso
           </h6>
@@ -77,6 +77,11 @@
     <div class="col-lg-12 border">
       <h6>Descrição</h6>
       {{product.description}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <p-galleria [images]="images" [showCaption]="false"></p-galleria>
     </div>
   </div>
 </div>

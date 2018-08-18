@@ -43,6 +43,32 @@ export class ProductFieldsComponent implements OnInit {
 
   public displayDialog: boolean = false;
 
+  public listErrorTypeAndMessageProductName: any[] = [
+    {
+      type: "required",
+      message: "Nome é obrigatório"
+    },
+    {
+      type: "minlength",
+      message: "Nome deve ter no mínimo 5 caracteres"
+    },
+    {
+      type: "maxlength",
+      message: "Nome deve ter no máximo 50 caracteres"
+    }
+  ];
+
+  public listErrorTypeAndMessageProductPrice: any[] = [
+    {
+      type: "required",
+      message: "Preço é obrigatório"
+    }
+  ];
+
+  public maxSizeImg: number = 1000000;
+
+  private pFileUpload: any;
+
   constructor(private categoryService: CategoryService, private initFormGroupService: InitFormGroupService) { }
 
   ngOnInit() {
@@ -52,6 +78,9 @@ export class ProductFieldsComponent implements OnInit {
     if (this.productForm === undefined || this.productForm === null)
       this.productForm = this.initFormGroupService.getFormGroupProduct(this.product);
     this.getCategories();
+    if (!this.product.gallery)
+      this.product.gallery = [];
+    //TODO: carregar lista de fotos no componente de galeria
   }
 
   public onChangeImage(event: any): void {
@@ -87,6 +116,20 @@ export class ProductFieldsComponent implements OnInit {
         this.notify.emit({msg: MSG_COMPONENT_CATEGORY_CREATED});
         break;
     }
+  }
+
+  public onSelect(event, pFileUpload): void {
+    if (this.pFileUpload === undefined)
+      this.pFileUpload = pFileUpload;
+    for (const file of event.files) {
+      if (file.size < this.maxSizeImg)
+        this.product.gallery.push(file);
+    }
+  }
+
+  public resetGallery(): void {
+    console.log(this.pFileUpload.files);
+    this.pFileUpload.clear();
   }
 
 }

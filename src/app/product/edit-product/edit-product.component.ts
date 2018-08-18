@@ -10,6 +10,7 @@ import {FormGroup} from "@angular/forms";
 import {InitFormGroupService} from "../../util/init-form-group.service";
 import {HandlerErrorMessage} from "../../util/handler-error-message";
 import {MSG_COMPONENT_ERROR} from "../../util/constants-messages";
+import * as $ from "jquery";
 
 @Component({
   selector: 'app-edit-product',
@@ -28,6 +29,8 @@ export class EditProductComponent implements OnInit {
 
   private errorHandler: HandlerErrorMessage = new HandlerErrorMessage();
 
+  public loading: boolean = false;
+
   constructor(private productService: ProductService, private activatedRoute: ActivatedRoute,
     private router: Router, private initFormGroupService: InitFormGroupService,
               private messageService: MessageService) { }
@@ -37,13 +40,16 @@ export class EditProductComponent implements OnInit {
     this.activatedRoute.params.subscribe(params => {
       const productId = +params["id"];
       if (typeof productId !== 'undefined' && productId !== null) {
+        this.startLoading();
         this.subs.push(
           this.productService.view(productId).subscribe(product => {
             this.product = product;
             this.productForm = this.initFormGroupService.getFormGroupProduct(this.product);
+            this.stopLoading();
           }, error => {
             this.messageService.add({severity: 'error', summary: MSG_ERROR,
               detail: this.errorHandler.getErrorMessage(error)});
+            this.stopLoading();
           })
         );
       }
@@ -51,10 +57,12 @@ export class EditProductComponent implements OnInit {
   }
 
   public update(): void {
+    this.startLoading();
     this.subs.push(
       this.productService.update(this.product).subscribe(() => {
         if (this.photo) {
           this.productService.uploadPhoto(this.product.id, this.photo).subscribe(() => {
+            this.stopLoading();
             this.messageService.add({severity: 'success', summary: MSG_SUCCESS, detail: MSG_PRODUCT_UPDATED});
             setTimeout(() => {
               this.goToProductDetails(this.product.id);
@@ -62,8 +70,10 @@ export class EditProductComponent implements OnInit {
           }, error => {
             this.messageService.add({severity: 'error', summary: MSG_ERROR,
               detail: this.errorHandler.getErrorMessage(error)});
+            this.stopLoading();
           });
         } else {
+          this.stopLoading();
           this.messageService.add({severity: 'success', summary: MSG_SUCCESS, detail: MSG_PRODUCT_UPDATED});
           setTimeout(() => {
             this.goToProductDetails(this.product.id);
@@ -72,6 +82,7 @@ export class EditProductComponent implements OnInit {
       }, error => {
         this.messageService.add({severity: 'error', summary: MSG_ERROR,
           detail: this.errorHandler.getErrorMessage(error)});
+        this.stopLoading();
       })
     );
   }
@@ -89,7 +100,7 @@ export class EditProductComponent implements OnInit {
   }
 
   private goToProductDetails(productId: number): void {
-    this.router.navigate(['/products/details', {id: productId}]);
+    this.router.navigate(['/products/details', productId]);
   }
 
   public cleanForm(): void {
@@ -102,4 +113,13 @@ export class EditProductComponent implements OnInit {
     this.router.navigateByUrl("/products");
   }
 
+  public startLoading(): void {
+    $("#btnUpdateProduct").prop("disabled", "disabled");
+    this.loading = true;
+  }
+
+  public stopLoading(): void {
+    $("#btnUpdateProduct").prop("disabled", false);
+    this.loading = false;
+  }
 }

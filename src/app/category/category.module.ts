@@ -4,7 +4,7 @@ import {CommonModule} from '@angular/common';
 import {CategoryRoutingModule} from './category-routing.module';
 import {CategoryService} from "./category.service";
 import {ReactiveFormsModule} from "@angular/forms";
-import {SharedModule} from "../util/shared.module";
+import {SharedModule} from "../shared/shared.module";
 import {CategoryListComponent} from "./category-list/category-list.component";
 
 @NgModule({

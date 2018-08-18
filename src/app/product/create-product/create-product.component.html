@@ -5,7 +5,7 @@
         <h1>Novo Produto</h1>
     </div>
   </div>
-  <app-product-fields (notify)="onNotify($event)" [productForm]="productForm"
+  <app-product-fields #productFields (notify)="onNotify($event)" [productForm]="productForm"
                       [product]="product"></app-product-fields>
   <!-- TODO: Criar componente global -->
   <div class="row">
@@ -16,7 +16,8 @@
       <button class="btn btn-danger">
         <i class="fa fa-stop"></i>&nbsp;Cancelar
       </button>
-      <button class="btn btn-success" (click)="save()" [disabled]="productForm.invalid">
+      <button class="btn btn-success" id="btnSaveProduct" (click)="save(productFields)" [disabled]="productForm.invalid">
+        <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>&nbsp;
         <i class="fa fa-save"></i>&nbsp;Salvar
       </button>
     </div>

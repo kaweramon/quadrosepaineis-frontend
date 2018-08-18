@@ -15,7 +15,8 @@
       <button class="btn btn-danger" (click)="cancelForm()">
         <i class="fa fa-stop"></i>&nbsp;Cancelar
       </button>
-      <button class="btn btn-success" [disabled]="productForm.invalid" (click)="update()">
+      <button class="btn btn-success" id="btnUpdateProduct" [disabled]="productForm.invalid" (click)="update()">
+        <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>&nbsp;
         <i class="fa fa-refresh"></i>&nbsp;Atualizar
       </button>
     </div>

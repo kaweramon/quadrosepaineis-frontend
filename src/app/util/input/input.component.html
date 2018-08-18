@@ -1,0 +1,5 @@
+<label class="form-control-label">{{label}}</label>&nbsp;<i style="color: red">*</i>
+<ng-content></ng-content>
+<app-validation-message *ngFor="let typeAndMessage of listTypeErrorAndMessage" [control]="control"
+                        [message]="typeAndMessage.message" [errorType]="typeAndMessage.type">
+</app-validation-message>

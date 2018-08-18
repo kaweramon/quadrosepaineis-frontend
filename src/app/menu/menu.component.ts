@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import * as $ from "jquery";
-import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
+import {LoginService} from "../security/login/login.service";
+import {User} from "../security/login/user.model";
+import {LOGGED_USER, USER} from "../util/constants";
 
 @Component({
   selector: 'app-menu',
@@ -9,26 +11,19 @@ import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 })
 export class MenuComponent implements OnInit {
 
-  constructor(private router: Router) { }
+  constructor(private loginService: LoginService) { }
+
+  public user: User;
 
   ngOnInit() {
-    this.router.events.subscribe(event => {
+    $(".navbar-nav > li").click(function () {
       $("#navbarNav").removeClass("show");
-      if (event instanceof NavigationEnd) {
-        if (event.url.indexOf("products") !== -1)
-          this.changeMenu("PRODUCTS");
-        else if (event.url.indexOf("categories") !== -1)
-          this.changeMenu("CATEGORIES");
-      }
-    }, error => {
-      console.log(error);
     });
+    this.user = JSON.parse(localStorage.getItem(LOGGED_USER));
   }
 
-  public changeMenu(menu: string): void {
-    $(".navbar-nav > li").removeClass("active");
-    console.log($("#menu-item-" + menu));
-    $("#menu-item-" + menu).addClass("active");
+  public hideIconMenu(): void {
+    $("#navbarNav").removeClass("show");
   }
 
   public tootleMenu(): void {
@@ -37,6 +32,10 @@ export class MenuComponent implements OnInit {
       menu.removeClass("show");
     else
       menu.addClass("show");
+  }
+
+  public isLoggedIn(): boolean {
+    return this.loginService.isUserLogged();
   }
 
 }

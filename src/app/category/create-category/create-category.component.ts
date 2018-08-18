@@ -53,7 +53,8 @@ export class CreateCategoryComponent implements OnInit {
   public save(): void {
     if (this.categoryForm.valid) {
       this.service.create(this.category).subscribe(() => {
-        this.messageService.add({severity: 'success', summary: MSG_SUCCESS, detail: MSG_CATEGORY_CREATED});
+        if (!this.hideCancelBtn)
+          this.messageService.add({severity: 'success', summary: MSG_SUCCESS, detail: MSG_CATEGORY_CREATED});
         this.clearCategoryForm();
         this.notify.emit({msg: MSG_COMPONENT_CATEGORY_CREATED});
       }, error => {
