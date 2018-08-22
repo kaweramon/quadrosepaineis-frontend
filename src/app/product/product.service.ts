@@ -26,7 +26,6 @@ export class ProductService {
     const params: HttpParams = new HttpParams();
     params.set('size', productFilter.size.toString());
     params.set('page', productFilter.page.toString());
-    console.log(productFilter);
     if (productFilter.name)
       params.set('name', productFilter.name);
 
@@ -39,7 +38,7 @@ export class ProductService {
     if (productFilter.categories && productFilter.categories.length > 0)
       params.set('categories', productFilter.categories.toString());
 
-    return this.http.get(this.productUrl + "resume", {params: params});
+    return this.http.get(this.productUrl + "resumedsa", {params: params});
   }
 
   public uploadPhoto(productId: number, photo: File): Observable<any> {

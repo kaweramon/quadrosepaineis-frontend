@@ -28,28 +28,36 @@
   </p-dialog>
 
   <div class="row">
-    <div class="col-lg-9 col-md-9 col-sm-7 d-flex align-items-start">
+    <!--<div class="col-lg-9 col-md-9 col-sm-5 d-flex align-items-start">
       <h1><i class="fa fa-shopping-cart"></i>&nbsp;Produtos</h1>
     </div>
-    <div class="col-lg-3 col-md-3 col-sm-5 d-flex align-items-end flex-column bd-highlight align-self-center">
+    <div class="col-lg-6 col-md-6 col-sm-7 d-flex align-items-end flex-column bd-highlight align-self-center">
+      <button class="btn btn-default" data-toggle="collapse" data-target="#collapseProductFilters"
+              aria-expanded="true" aria-controls="collapseProductFilters" (click)="showCardProductFilters()">
+        <i class="fa fa-search"></i>&nbsp;Pesquisar
+      </button>
+      <button class="btn btn-primary" (click)="goToNewProduct()">
+        <i class="fa fa-plus"></i>&nbsp;Novo
+      </button>
+    </div>-->
+    <div class="col-lg-3 col-md-3 col-sm-5">
+      <h1><i class="fa fa-shopping-cart"></i>&nbsp;Produtos</h1>
+    </div>
+    <div class="col-lg-9 col-md-9 col-sm-7 d-flex align-items-center justify-content-end">
+      <button class="btn btn-default" style="margin-right: 5px"
+              (click)="showCardProductFilters()">
+        <i class="fa fa-search"></i>&nbsp;Pesquisar
+      </button>
       <button class="btn btn-primary" (click)="goToNewProduct()">
         <i class="fa fa-plus"></i>&nbsp;Novo
       </button>
     </div>
   </div>
   <!--Filtrar Pesquisa-->
-  <div class="row">
+  <div class="row" [@toogleSearch]="toogleProdSearch">
     <div class="col-12">
       <div class="card">
-        <div class="card-header" id="headingOne" (click)="showCardProductFilters()">
-          <h5 class="mb-0">
-            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseProductFilters"
-                    aria-expanded="true" aria-controls="collapseProductFilters">
-              Filtrar Pesquisa
-            </button>
-          </h5>
-        </div>
-        <div id="collapseProductFilters" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+        <div id="collapseProductFilters">
           <div class="card-body">
             <div class="row">
               <div class="col-lg-8 col-md-6 col-sm-8 form-group">
@@ -92,7 +100,7 @@
       <p-dataView [value]="products" [emptyMessage]="msgNoRecords" [paginator]="true" [rows]="10"
       [lazy]="true" (onLazyLoad)="loadData($event)" [totalRecords]="totalRecords">
         <ng-template let-product pTemplate="listItem">
-          <div class="row" style="padding: 2em;" [@productAppeared]="productState">
+          <div class="row" style="padding: 2em;" [@productAppeared]="productState" [@row]="rowState">
             <div class="col-lg-4 col-sm-4" style="text-align:center; border-bottom: 1px solid #d9d9d9">
               <img *ngIf="product.photo" (click)=showDialogProductImg(product)
                    class="img-thumbnail" [src]="product.sanitizeImgUrl">

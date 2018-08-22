@@ -80,7 +80,7 @@ export class ProductFieldsComponent implements OnInit {
     this.getCategories();
     if (!this.product.gallery)
       this.product.gallery = [];
-    //TODO: carregar lista de fotos no componente de galeria
+    // TODO: carregar lista de fotos no componente de galeria
   }
 
   public onChangeImage(event: any): void {

@@ -30,7 +30,7 @@ export class CreateProductComponent implements OnInit {
 
   public productForm: FormGroup;
 
-  public errorHandler: HandlerErrorMessage = new HandlerErrorMessage();
+  // public errorHandler: HandlerErrorMessage = new HandlerErrorMessage();
 
   public loading: boolean = false;
 
@@ -62,14 +62,14 @@ export class CreateProductComponent implements OnInit {
           this.messageService.add({severity: 'success', summary: MSG_SUCCESS, detail: MSG_PRODUCT_CREATED});
         }, error => {
           this.stopLoading();
-          this.messageService.add({severity: 'error',
-            summary: MSG_ERROR, detail: this.errorHandler.getErrorMessage(error)});
+          /*this.messageService.add({severity: 'error',
+            summary: MSG_ERROR, detail: this.errorHandler.getErrorMessage(error)});*/
           this.service.delete(result.id).subscribe(() => {
 
           }, errorDelete => {
             this.stopLoading();
-            this.messageService.add({severity: 'error', summary: MSG_ERROR,
-              detail: this.errorHandler.getErrorMessage(errorDelete)});
+            /*this.messageService.add({severity: 'error', summary: MSG_ERROR,
+              detail: this.errorHandler.getErrorMessage(errorDelete)});*/
           });
         });
       } else {
@@ -77,19 +77,19 @@ export class CreateProductComponent implements OnInit {
         this.messageService.add({severity: 'success', summary: MSG_SUCCESS, detail: MSG_PRODUCT_CREATED});
         this.stopLoading();
       }
-      if (gallery) {
+      if (gallery && gallery.length > 0) {
         console.log(gallery);
         this.service.uploadGallery(result.id, gallery).subscribe(() => {
           productFields.resetGallery();
         }, error => {
           this.stopLoading();
-          this.messageService.add({severity: 'error', summary: MSG_ERROR,
-            detail: this.errorHandler.getErrorMessage(error)});
+          /*this.messageService.add({severity: 'error', summary: MSG_ERROR,
+            detail: this.errorHandler.getErrorMessage(error)});*/
         });
       }
     }, error => {
       this.stopLoading();
-      this.messageService.add({severity: 'error', summary: MSG_ERROR, detail: this.errorHandler.getErrorMessage(error)});
+      // this.messageService.add({severity: 'error', summary: MSG_ERROR, detail: this.errorHandler.getErrorMessage(error)});
     });
   }
 
@@ -103,8 +103,8 @@ export class CreateProductComponent implements OnInit {
         this.messageService.add({severity: 'success', summary: MSG_SUCCESS, detail: MSG_CATEGORY_CREATED});
         break;
       case MSG_COMPONENT_ERROR:
-        this.messageService.add({severity: 'error', summary: MSG_ERROR,
-          detail: this.errorHandler.getErrorMessage(event.error)});
+        /*this.messageService.add({severity: 'error', summary: MSG_ERROR,
+          detail: this.errorHandler.getErrorMessage(event.error)});*/
         break;
     }
   }

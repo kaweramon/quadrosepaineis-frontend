@@ -22,7 +22,7 @@ export class ProductDetailsComponent implements OnInit {
 
   public modalDeleteProductComponent: ModalDeleteProductComponent;
 
-  private errorHandler: HandlerErrorMessage = new HandlerErrorMessage();
+  // private errorHandler: HandlerErrorMessage = new HandlerErrorMessage();
 
   public images: any[] = [];
 
@@ -45,8 +45,8 @@ export class ProductDetailsComponent implements OnInit {
               }
             }
           }, error => {
-            this.messageService.add({severity: 'error', summary: MSG_ERROR,
-              detail: this.errorHandler.getErrorMessage(error)});
+            /*this.messageService.add({severity: 'error', summary: MSG_ERROR,
+              detail: this.errorHandler.getErrorMessage(error)});*/
           })
         );
       }

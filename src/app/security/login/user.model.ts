@@ -4,6 +4,6 @@ export interface User {
   name: string;
   email: string;
   password: string;
-  accessToken: string;
+  access_token: string;
   permissions: string[];
 }

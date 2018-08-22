@@ -27,7 +27,7 @@ export class EditProductComponent implements OnInit {
 
   private subs: ISubscription[] = [];
 
-  private errorHandler: HandlerErrorMessage = new HandlerErrorMessage();
+  // private errorHandler: HandlerErrorMessage = new HandlerErrorMessage();
 
   public loading: boolean = false;
 
@@ -47,8 +47,8 @@ export class EditProductComponent implements OnInit {
             this.productForm = this.initFormGroupService.getFormGroupProduct(this.product);
             this.stopLoading();
           }, error => {
-            this.messageService.add({severity: 'error', summary: MSG_ERROR,
-              detail: this.errorHandler.getErrorMessage(error)});
+            /*this.messageService.add({severity: 'error', summary: MSG_ERROR,
+              detail: this.errorHandler.getErrorMessage(error)});*/
             this.stopLoading();
           })
         );
@@ -58,6 +58,7 @@ export class EditProductComponent implements OnInit {
 
   public update(): void {
     this.startLoading();
+    this.product.gallery = undefined;
     this.subs.push(
       this.productService.update(this.product).subscribe(() => {
         if (this.photo) {
@@ -68,8 +69,8 @@ export class EditProductComponent implements OnInit {
               this.goToProductDetails(this.product.id);
             }, 2000);
           }, error => {
-            this.messageService.add({severity: 'error', summary: MSG_ERROR,
-              detail: this.errorHandler.getErrorMessage(error)});
+            /*this.messageService.add({severity: 'error', summary: MSG_ERROR,
+              detail: this.errorHandler.getErrorMessage(error)});*/
             this.stopLoading();
           });
         } else {
@@ -80,8 +81,8 @@ export class EditProductComponent implements OnInit {
           }, 2000);
         }
       }, error => {
-        this.messageService.add({severity: 'error', summary: MSG_ERROR,
-          detail: this.errorHandler.getErrorMessage(error)});
+        /*this.messageService.add({severity: 'error', summary: MSG_ERROR,
+          detail: this.errorHandler.getErrorMessage(error)});*/
         this.stopLoading();
       })
     );
@@ -93,8 +94,8 @@ export class EditProductComponent implements OnInit {
         this.photo = event.photo;
         break;
       case MSG_COMPONENT_ERROR:
-        this.messageService.add({severity: 'error', summary: MSG_ERROR,
-          detail: this.errorHandler.getErrorMessage(event.error)});
+        /*this.messageService.add({severity: 'error', summary: MSG_ERROR,
+          detail: this.errorHandler.getErrorMessage(event.error)});*/
         break;
     }
   }

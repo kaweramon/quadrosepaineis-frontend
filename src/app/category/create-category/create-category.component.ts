@@ -30,7 +30,7 @@ export class CreateCategoryComponent implements OnInit {
   @Output()
   public notify: EventEmitter<any> = new EventEmitter<any>();
 
-  public errorHandler: HandlerErrorMessage = new HandlerErrorMessage();
+  // public errorHandler: HandlerErrorMessage = new HandlerErrorMessage();
 
   constructor(private initFormService: InitFormGroupService,
               private service: CategoryService,
@@ -58,7 +58,7 @@ export class CreateCategoryComponent implements OnInit {
         this.clearCategoryForm();
         this.notify.emit({msg: MSG_COMPONENT_CATEGORY_CREATED});
       }, error => {
-        this.messageService.add({severity: 'error', summary: MSG_ERROR, detail: this.errorHandler.getErrorMessage(error)});
+        // this.messageService.add({severity: 'error', summary: MSG_ERROR, detail: this.errorHandler.getErrorMessage(error)});
       });
     }
   }

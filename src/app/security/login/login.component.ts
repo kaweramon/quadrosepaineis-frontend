@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {LoginService} from "./login.service";
-import {HandlerErrorMessage} from "../../util/handler-error-message";
 import {MessageService} from "primeng/components/common/messageservice";
-import {MSG_ERROR, MSG_SUCCESS} from "../../util/constants-messages";
+import {MSG_SUCCESS} from "../../util/constants-messages";
 import {ActivatedRoute, Router} from "@angular/router";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
@@ -16,7 +15,6 @@ export class LoginComponent implements OnInit {
   public name: string;
   public password: string;
   public navigateTo: string;
-  public errorHandler: HandlerErrorMessage = new HandlerErrorMessage();
   public loginForm: FormGroup;
 
   constructor(private loginService: LoginService,
@@ -38,8 +36,8 @@ export class LoginComponent implements OnInit {
       this.messageService.add({severity: 'success', summary: MSG_SUCCESS,
         detail: "Login efetuado com sucesso!"});
     }, error => {
-      this.messageService.add({severity: 'error', summary: MSG_ERROR,
-        detail: this.errorHandler.getErrorMessage(error)});
+      /*this.messageService.add({severity: 'error', summary: MSG_ERROR,
+        detail: this.errorHandler.getErrorMessage(error)});*/
     }, () => {
       this.router.navigate([this.navigateTo]);
     });

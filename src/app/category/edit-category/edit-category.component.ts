@@ -16,7 +16,7 @@ import {InitFormGroupService} from "../../util/init-form-group.service";
 })
 export class EditCategoryComponent implements OnInit {
 
-  public errorHandler: HandlerErrorMessage = new HandlerErrorMessage();
+  // public errorHandler: HandlerErrorMessage = new HandlerErrorMessage();
 
   private subs: ISubscription[] = [];
 
@@ -36,8 +36,8 @@ export class EditCategoryComponent implements OnInit {
           this.category = result;
           this.categoryForm = this.initFormGroupService.getFormGroupCategory(this.category);
         }, error => {
-          this.messageService.add({severity: 'error', summary: MSG_ERROR,
-            detail: this.errorHandler.getErrorMessage(error)});
+          /*this.messageService.add({severity: 'error', summary: MSG_ERROR,
+            detail: this.errorHandler.getErrorMessage(error)});*/
         })
       );
     });
@@ -57,8 +57,8 @@ export class EditCategoryComponent implements OnInit {
       this.service.update(this.category).subscribe(() => {
         this.messageService.add({severity: 'success', detail: MSG_CATEGORY_UPDATED});
       }, error => {
-        this.messageService.add({severity: 'error', summary: MSG_ERROR,
-          detail: this.errorHandler.getErrorMessage(error)});
+        /*this.messageService.add({severity: 'error', summary: MSG_ERROR,
+          detail: this.errorHandler.getErrorMessage(error)});*/
       })
     );
   }

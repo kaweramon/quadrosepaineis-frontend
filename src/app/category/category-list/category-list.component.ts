@@ -19,7 +19,7 @@ export class CategoryListComponent implements OnInit {
 
   public categoryToDelete: Category;
 
-  public errorHandler: HandlerErrorMessage = new HandlerErrorMessage();
+  // public errorHandler: HandlerErrorMessage = new HandlerErrorMessage();
 
   constructor(private service: CategoryService, private router: Router,
               private messageService: MessageService) { }
@@ -32,7 +32,7 @@ export class CategoryListComponent implements OnInit {
     this.service.list().subscribe(result => {
       this.categories = result;
     }, error => {
-      this.messageService.add({severity: 'error', summary: MSG_ERROR, detail: this.errorHandler.getErrorMessage(error)});
+      // this.messageService.add({severity: 'error', summary: MSG_ERROR, detail: this.errorHandler.getErrorMessage(error)});
     });
   }
 
@@ -55,7 +55,7 @@ export class CategoryListComponent implements OnInit {
       this.displayModalDeleteCategory = false;
       this.search();
     }, error => {
-      this.messageService.add({severity: 'error', summary: MSG_ERROR, detail: this.errorHandler.getErrorMessage(error)});
+      // this.messageService.add({severity: 'error', summary: MSG_ERROR, detail: this.errorHandler.getErrorMessage(error)});
     });
   }
 

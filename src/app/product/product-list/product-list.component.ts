@@ -1,5 +1,5 @@
 import {ProductFilter} from './../product-filter';
-import {MSG_ERROR, MSG_PRODUCT_DELETED, MSG_SUCCESS} from './../../util/constants-messages';
+import {MSG_PRODUCT_DELETED, MSG_SUCCESS} from './../../util/constants-messages';
 import {ModalDeleteProductComponent} from './../modal-delete-product/modal-delete-product.component';
 import {ProductService} from './../product.service';
 import {AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
@@ -9,11 +9,10 @@ import {ISubscription} from 'rxjs/Subscription';
 import {ConfirmationService, LazyLoadEvent} from 'primeng/api';
 import {MessageService} from 'primeng/components/common/messageservice';
 import {DomSanitizer} from "@angular/platform-browser";
-import {HandlerErrorMessage} from "../../util/handler-error-message";
 import * as $ from "jquery";
 import {Category} from "../../category/category";
 import {CategoryService} from "../../category/category.service";
-import {animate, state, style, transition, trigger} from "@angular/animations";
+import {animate, keyframes, state, style, transition, trigger} from "@angular/animations";
 
 @Component({
   selector: 'app-product-list',
@@ -26,12 +25,45 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
         style({opacity: 0, transform: 'translate(-30px, -10px)'}),
         animate('1000ms 0s ease-in-out')
       ])
+    ]),
+    trigger("toogleSearch", [
+      state("hidden", style({
+        opacity: 0,
+        "max-height": "0px"
+      })),
+      state("visible", style({
+        opacity: 1,
+        "max-height": "180px",
+        "margin-bottom": "10px"
+      })),
+      transition("* => *", [
+        animate('1000ms 0s ease-in-out')
+      ])
+    ]),
+    trigger('row', [
+      state('ready', style({opacity: 1})),
+      transition('void => ready', animate('1000ms 0s ease-in', keyframes([
+        style({opacity: 0, transform: 'translateX(-30px)', offset: 0}),
+        style({opacity: 0.8, transform: 'translateX(10px)', offset: 0.8}),
+        style({opacity: 1, transform: 'translateX(0px)', offset: 1})
+      ]))),
+      transition('ready => void', animate('1000ms 0s ease-out', keyframes([
+        style({opacity: 1, transform: 'translateX(0px)', offset: 0}),
+        style({opacity: 0.8, transform: 'translateX(25px)', offset: 0.2}),
+        style({opacity: 0.6, transform: 'translateX(50px)', offset: 0.4}),
+        style({opacity: 0.4, transform: 'translateX(70px)', offset: 0.6}),
+        style({opacity: 0, transform: 'translateX(100px)', offset: 1})
+      ])))
     ])
   ]
 })
 export class ProductListComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public productState: string = "ready";
+
+  public rowState = 'ready';
+
+  public toogleProdSearch: string = "hidden";
 
   public products: Product[] = [];
 
@@ -47,7 +79,7 @@ export class ProductListComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public filter: ProductFilter = new ProductFilter();
 
-  public errorHandler: HandlerErrorMessage = new HandlerErrorMessage();
+  // public errorHandler: HandlerErrorMessage = new HandlerErrorMessage();
 
   public loading: boolean = false;
 
@@ -95,10 +127,6 @@ export class ProductListComponent implements OnInit, OnDestroy, AfterViewInit {
         this.products = result.content;
         this.loadSanitizeImgUrl();
         this.stopLoading();
-      }, error => {
-        this.stopLoading();
-        this.messageService.add({severity: 'error', summary: MSG_ERROR,
-          detail: this.errorHandler.getErrorMessage(error)});
       })
     );
   }
@@ -141,22 +169,24 @@ export class ProductListComponent implements OnInit, OnDestroy, AfterViewInit {
   public removeProduct(): void {
     this.subs.push(
       this.service.delete(this.productSelected.id).subscribe(() => {
+        for (let i = 0; i < this.products.length; i++) {
+          if (this.products[i].id === this.productSelected.id)
+            this.products.splice(i, 1);
+        }
         this.messageService.add({severity: 'success', summary: MSG_SUCCESS, detail: MSG_PRODUCT_DELETED});
-        this.search(this.filter.page);
-        this.displayDialogDeleteProduct = false;
       }, error => {
-        this.messageService.add({severity: 'error', summary: MSG_ERROR,
-          detail: this.errorHandler.getErrorMessage(error)});
+        this.displayDialogDeleteProduct = false;
+        /*this.messageService.add({severity: 'error', summary: MSG_ERROR,
+          detail: this.errorHandler.getErrorMessage(error)});*/
       })
     );
   }
 
   filterCategory(query, categories: any[]): any[] {
     const filtered: any[] = [];
-    console.log(categories);
     for (let i = 0; i < categories.length; i++) {
       const category = categories[i];
-      if (category.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
+      if (category.name.toLowerCase().indexOf(query.toLowerCase()) !== - 1) {
         filtered.push(category);
       }
     }
@@ -169,8 +199,8 @@ export class ProductListComponent implements OnInit, OnDestroy, AfterViewInit {
       this.categoryService.list().subscribe(result => {
         this.categories = this.filterCategory(query, result);
       }, error => {
-        this.messageService.add({severity: 'error', summary: MSG_ERROR,
-          detail: this.errorHandler.getErrorMessage(error)});
+        /*this.messageService.add({severity: 'error', summary: MSG_ERROR,
+          detail: this.errorHandler.getErrorMessage(error)});*/
       })
     );
   }
@@ -189,11 +219,7 @@ export class ProductListComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public showCardProductFilters(): void {
-    const cardColappse = $("#collapseProductFilters");
-    if (cardColappse.hasClass("show"))
-      cardColappse.removeClass("show");
-    else
-      cardColappse.addClass("show");
+    this.toogleProdSearch = this.toogleProdSearch === 'hidden' ? 'visible' : 'hidden';
   }
 
 }

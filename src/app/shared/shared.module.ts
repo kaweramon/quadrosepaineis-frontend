@@ -15,6 +15,7 @@ import {ToastModule} from "primeng/toast";
 import {AutoCompleteModule} from 'primeng/autocomplete';
 import {FileUploadModule} from 'primeng/fileupload';
 import {GalleriaModule} from 'primeng/galleria';
+import {GrowlModule} from 'primeng/growl';
 
 import {CreateCategoryComponent} from "../category/create-category/create-category.component";
 import {CategoryFieldsComponent} from "../category/category-fields/category-fields.component";
@@ -24,6 +25,11 @@ import {InputComponent} from "../util/input/input.component";
 import {LoginService} from "../security/login/login.service";
 import {LoginComponent} from "../security/login/login.component";
 import {LoggedinGuard} from "../security/loggedin.guard";
+import {HTTP_INTERCEPTORS} from "@angular/common/http";
+import {AuthInterceptor} from "../security/auth-interceptor";
+import {HandlerErrorMessage} from "../util/handler-error-message";
+import {NotificationsService} from "../util/notifications/notifications.service";
+import {NotificationsComponent} from "../util/notifications/nofitications.component";
 
 @NgModule({
   imports: [
@@ -39,7 +45,8 @@ import {LoggedinGuard} from "../security/loggedin.guard";
     ToastModule,
     AutoCompleteModule,
     FileUploadModule,
-    GalleriaModule
+    GalleriaModule,
+    GrowlModule
   ],
   declarations: [
     ValidationMessageComponent,
@@ -47,7 +54,8 @@ import {LoggedinGuard} from "../security/loggedin.guard";
     CreateCategoryComponent,
     EditCategoryComponent,
     InputComponent,
-    LoginComponent
+    LoginComponent,
+    NotificationsComponent
   ],
   exports: [
     DataViewModule,
@@ -60,9 +68,11 @@ import {LoggedinGuard} from "../security/loggedin.guard";
     AutoCompleteModule,
     ValidationMessageComponent,
     CreateCategoryComponent,
+    NotificationsComponent,
     InputComponent,
     FileUploadModule,
-    GalleriaModule
+    GalleriaModule,
+    GrowlModule
   ]
 })
 export class SharedModule {
@@ -76,7 +86,10 @@ export class SharedModule {
         CategoryService,
         InitFormGroupService,
         LoginService,
-        LoggedinGuard
+        LoggedinGuard,
+        HandlerErrorMessage,
+        NotificationsService,
+        {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}
       ]
     };
   }
