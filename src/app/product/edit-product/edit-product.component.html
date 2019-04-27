@@ -5,7 +5,23 @@
       <h1>Editar Produto</h1>
     </div>
   </div>
-  <app-product-fields (notify)="onNotify($event)" [productForm]="productForm" [product]="product"></app-product-fields>
+  <div class="row">
+    <div class="col-12">
+      <app-product-fields #productFields (notify)="onNotify($event)" [productForm]="productForm" [product]="product">
+      </app-product-fields>
+    </div>
+  </div>
+
+  <div class="row" style="margin: auto; margin-bottom: 15px">
+    <div class="container-img-card" style="margin-right: 5px" *ngFor="let imgUrl of product.listProdImgUrls">
+      <img [src]="imgUrl.fullUrl" alt="" />
+      <div class="overlay"></div>
+      <div class="button">
+        <a (click)="removeProdImg(imgUrl.id)">Remover</a>
+      </div>
+    </div>
+  </div>
+
   <!-- TODO: Criar componente global -->
   <div class="row">
     <div class="col-sm-12 text-right">

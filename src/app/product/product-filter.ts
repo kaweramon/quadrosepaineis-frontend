@@ -9,6 +9,7 @@ export class ProductFilter {
 
   constructor() {
     this.size = 10;
+    this.page = 0;
     this.categories = [];
     this.isActive = true;
   }

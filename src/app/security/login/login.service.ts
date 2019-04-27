@@ -4,9 +4,9 @@ import {URL_API} from "../../util/url-api";
 import {Observable} from "rxjs";
 import 'rxjs/add/operator/do';
 import {Router} from "@angular/router";
-import {LOGGED_USER, USER} from "../../util/constants";
+import {LOGGED_USER} from "../../util/constants";
 import {User} from "./user.model";
-import {JwtHelper} from "angular2-jwt";
+import {JwtHelperService} from "@auth0/angular-jwt";
 
 @Injectable()
 export class LoginService {
@@ -15,7 +15,9 @@ export class LoginService {
 
   private userUrl: string = `${URL_API}users/`;
 
-  jwtHelper: JwtHelper = new JwtHelper();
+  private deleteTokenUrl: string = `${URL_API}tokens/revoke`;
+
+  jwtHelper: JwtHelperService = new JwtHelperService();
 
   private headers: HttpHeaders = new HttpHeaders(
     {"Content-Type": "application/x-www-form-urlencoded",
@@ -46,7 +48,16 @@ export class LoginService {
   }
 
   public handleLogin(path?: string) {
-    this.router.navigate(['/login', path]);
+    if (path)
+      this.router.navigate(['/login', path]);
+    else
+      this.router.navigate(['/login']);
+  }
+
+  public logout(): Observable<any> {
+    console.log("logout");
+    localStorage.clear();
+    return this.http.delete(this.deleteTokenUrl);
   }
 
   public getLoggedUser(): User {

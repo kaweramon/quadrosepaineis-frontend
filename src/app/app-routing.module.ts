@@ -1,19 +1,18 @@
-import {Routes, RouterModule, ExtraOptions} from '@angular/router';
-import { NgModule } from '@angular/core';
+import {ExtraOptions, RouterModule, Routes} from '@angular/router';
+import {NgModule} from '@angular/core';
 import {LoginComponent} from "./security/login/login.component";
-import {LoggedinGuard} from "./security/loggedin.guard";
 
 const routes: Routes = [
   {
-    path: "login/:to", component: LoginComponent
+    path: "login/:redirectTo", component: LoginComponent
   },
   {
     path: "login", component: LoginComponent
   },
   {
     path: 'products',
-    loadChildren: 'app/product/product.module#ProductModule',
-    canLoad: [LoggedinGuard], canActivate: [LoggedinGuard]
+    loadChildren: 'app/product/product.module#ProductModule'
+
   },
   {
     path: 'categories',

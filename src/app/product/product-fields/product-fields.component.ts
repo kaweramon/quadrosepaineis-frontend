@@ -1,13 +1,14 @@
 import {MSG_CP_PHOTO_CHANGED} from './../../util/msg-components';
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {Product} from '../product';
 import {Category} from "../../category/category";
 import {CategoryService} from "../../category/category.service";
-import {AutoComplete} from "primeng/primeng";
+import {AutoComplete, FileUpload} from "primeng/primeng";
 import {ISubscription} from "rxjs/Subscription";
 import {FormGroup} from "@angular/forms";
 import {InitFormGroupService} from "../../util/init-form-group.service";
 import {MSG_COMPONENT_CATEGORY_CREATED, MSG_COMPONENT_ERROR} from "../../util/constants-messages";
+import * as $ from "jquery";
 
 class CategorySelect {
   public label: string;
@@ -24,7 +25,7 @@ class CategorySelect {
   templateUrl: './product-fields.component.html',
   styleUrls: ['./product-fields.component.css']
 })
-export class ProductFieldsComponent implements OnInit {
+export class ProductFieldsComponent implements OnInit, AfterViewInit {
 
   @Input()
   public product: Product;
@@ -67,9 +68,14 @@ export class ProductFieldsComponent implements OnInit {
 
   public maxSizeImg: number = 1000000;
 
-  private pFileUpload: any;
+  @ViewChild(FileUpload)
+  public pFileUpload: FileUpload;
 
-  constructor(private categoryService: CategoryService, private initFormGroupService: InitFormGroupService) { }
+  @ViewChild(ElementRef)
+  private inputFile: ElementRef;
+
+  constructor(private categoryService: CategoryService,
+              private initFormGroupService: InitFormGroupService) { }
 
   ngOnInit() {
     if (this.product === undefined || this.product === null) {
@@ -128,8 +134,23 @@ export class ProductFieldsComponent implements OnInit {
   }
 
   public resetGallery(): void {
-    console.log(this.pFileUpload.files);
-    this.pFileUpload.clear();
+    if (this.pFileUpload.files && this.pFileUpload.files.length > 0)
+      this.pFileUpload.clear();
+  }
+
+  public resetInputFile(): void {
+    $("#inputFileProductImg").val("");
+  }
+
+  ngAfterViewInit(): void {
+    // TODO: Carregar imagens se for editar
+    /*if (this.product.id && this.product.galleryPaths && this.product.galleryPaths.length > 0) {
+      this.service.getImageByPath(this.product.galleryPaths[0].largeUrl).subscribe(result => {
+        console.log(result);
+        const file = <File>result;
+        console.log(file);
+      });
+    }*/
   }
 
 }

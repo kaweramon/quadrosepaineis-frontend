@@ -39,8 +39,6 @@ export class ModalDeleteProductComponent implements OnInit {
     if (product) {
       this.service.updateIsActiveProperty(product.id, false).subscribe(() => {
         this.notify.emit({msg: MSG_COMPONENT_PRODUCT_CONFIRM_DELETE});
-      }, error => {
-        this.notify.emit({msg: MSG_COMPONENT_ERROR});
       });
     }
   }

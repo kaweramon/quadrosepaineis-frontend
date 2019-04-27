@@ -9,6 +9,7 @@ export const MSG_PRODUCT_CREATED = 'Produto cadastrado';
 export const MSG_PRODUCT_UPDATED = 'Produto atualizado';
 export const MSG_PRODUCT_DELETED = 'Produto deletado';
 export const MSG_COMPONENT_PRODUCT_CONFIRM_DELETE = "PRODUCT_CONFIRM_DELETE";
+export const MSG_PRODUCT_SEQUENCE_UPDATED = "Sequência de produtos atualizada";
 
 // Category
 export const MSG_CATEGORY_CREATED = 'Categoria cadastrada';

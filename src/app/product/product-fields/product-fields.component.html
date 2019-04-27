@@ -11,8 +11,8 @@
     </div>
     <div class="form-group col-sm-6">
       <label>Foto</label>
-      <input *ngIf="product.photo === null || product.photo === undefined"
-        type="file" accept="image/*" (change)="onChangeImage($event)" class="form-control-file">
+      <input #inputFile *ngIf="product.photo === null || product.photo === undefined"
+        type="file" accept="image/*" id="inputFileProductImg" (change)="onChangeImage($event)" class="form-control-file">
       <p style="font-size: 8px">Tamanho máximo: 1MB</p>
       <div *ngIf="product.photo" class="row">
         <div class="col-lg-8">
@@ -90,7 +90,7 @@
       <label>Galeria</label>
       <p-fileUpload name="demo[]" (onSelect)="onSelect($event, pFileUpload)"
                     multiple="multiple" chooseLabel="Selecionar" cancelLabel="Cancelar"
-                    #pFileUpload
+                    #pFileUpload (onClear)="resetGallery()"
                     [showUploadButton]="false" accept="image/*" maxFileSize="1000000">
       </p-fileUpload>
     </div>

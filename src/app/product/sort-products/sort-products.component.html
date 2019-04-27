@@ -1,0 +1,27 @@
+<p-toast></p-toast>
+<div class="container" *ngIf="products && products.length > 0">
+  <!--<div >{{product.name}}</div>-->
+  <h1>Reordenar Produtos</h1>
+
+  <div dragula="PRODUCT" class="d-flex align-content-start flex-wrap" id="products" [(dragulaModel)]="products">
+    <div class="card" *ngFor="let product of products" style="width: 15rem;">
+      <!--<img class="card-img-top" *ngIf="product.photo" [src]="product.sanitizeImgUrl">-->
+      <div class="card-body">
+        <p class="card-text">
+          {{product.name}}
+          <span class="badge badge-pill badge-primary pull-right">{{product.sequence}}</span>
+        </p>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <button class="btn btn-success pull-right" (click)="save()">
+        <i class="fa fa-save"></i>&nbsp;Salvar
+      </button>
+    </div>
+  </div>
+
+</div>

@@ -1,5 +1,5 @@
 import {ProductFilter} from './../product-filter';
-import {MSG_PRODUCT_DELETED, MSG_SUCCESS} from './../../util/constants-messages';
+import {MSG_ERROR, MSG_PRODUCT_DELETED, MSG_SUCCESS} from './../../util/constants-messages';
 import {ModalDeleteProductComponent} from './../modal-delete-product/modal-delete-product.component';
 import {ProductService} from './../product.service';
 import {AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
@@ -13,6 +13,8 @@ import * as $ from "jquery";
 import {Category} from "../../category/category";
 import {CategoryService} from "../../category/category.service";
 import {animate, keyframes, state, style, transition, trigger} from "@angular/animations";
+import {HandlerErrorMessage} from "../../util/handler-error-message";
+import {URL_API} from "../../util/url-api";
 
 @Component({
   selector: 'app-product-list',
@@ -79,7 +81,7 @@ export class ProductListComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public filter: ProductFilter = new ProductFilter();
 
-  // public errorHandler: HandlerErrorMessage = new HandlerErrorMessage();
+  public errorHandler: HandlerErrorMessage = new HandlerErrorMessage(null, null);
 
   public loading: boolean = false;
 
@@ -123,6 +125,7 @@ export class ProductListComponent implements OnInit, OnDestroy, AfterViewInit {
     $("input").prop("disabled", "disabled");
     this.subs.push(
       this.service.resume(this.filter).subscribe(result => {
+        console.log(result);
         this.totalRecords = result.totalElements;
         this.products = result.content;
         this.loadSanitizeImgUrl();
@@ -139,10 +142,12 @@ export class ProductListComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public loadSanitizeImgUrl(): void {
     this.products.forEach(product => {
-      if (product.photo) {
+      product.sanitizeImgUrl = URL_API + "images/image-resource/" + product.id + "/main/small";
+      /*if (product.photo) {
         product.sanitizeImgUrl =
           this.sanitizer.bypassSecurityTrustResourceUrl("data:image/jpeg;base64," + product.photo);
-      }
+
+      }*/
     });
   }
 
@@ -169,6 +174,7 @@ export class ProductListComponent implements OnInit, OnDestroy, AfterViewInit {
   public removeProduct(): void {
     this.subs.push(
       this.service.delete(this.productSelected.id).subscribe(() => {
+        this.displayDialogDeleteProduct = false;
         for (let i = 0; i < this.products.length; i++) {
           if (this.products[i].id === this.productSelected.id)
             this.products.splice(i, 1);
@@ -176,8 +182,8 @@ export class ProductListComponent implements OnInit, OnDestroy, AfterViewInit {
         this.messageService.add({severity: 'success', summary: MSG_SUCCESS, detail: MSG_PRODUCT_DELETED});
       }, error => {
         this.displayDialogDeleteProduct = false;
-        /*this.messageService.add({severity: 'error', summary: MSG_ERROR,
-          detail: this.errorHandler.getErrorMessage(error)});*/
+        this.messageService.add({severity: 'error', summary: MSG_ERROR,
+          detail: this.errorHandler.getErrorMessage(error)});
       })
     );
   }

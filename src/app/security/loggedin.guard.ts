@@ -2,8 +2,6 @@ import {ActivatedRouteSnapshot, CanActivate, CanLoad, Route, RouterStateSnapshot
 import {Observable} from "rxjs";
 import {Injectable} from "@angular/core";
 import {LoginService} from "./login/login.service";
-import {tokenNotExpired} from "angular2-jwt";
-import {User} from "./login/user.model";
 
 @Injectable()
 export class LoggedinGuard implements CanLoad, CanActivate {

@@ -1,28 +1,32 @@
 import {HttpErrorResponse} from "@angular/common/http";
-import {ErrorHandler, Injectable} from "@angular/core";
+import {ErrorHandler, Injectable, Injector} from "@angular/core";
 import {MSG_ERROR} from "./constants-messages";
 import {NotificationsService} from "./notifications/notifications.service";
 import {LoginService} from "../security/login/login.service";
+import {Router} from "@angular/router";
 
 @Injectable()
 export class HandlerErrorMessage extends ErrorHandler {
 
-  constructor(private notificationsService: NotificationsService, private loginService: LoginService) {
+  constructor(private notificationsService: NotificationsService,
+              private injector: Injector) {
     super();
   }
 
   public handleError(errorResponse: HttpErrorResponse | any) {
-    console.log(errorResponse);
+    console.log("handleError");
     this.notificationsService.notify("error", MSG_ERROR, this.getErrorMessage(errorResponse));
     super.handleError(errorResponse);
   }
 
   public getErrorMessage(error: any): string {
+
     console.log(error);
 
     switch (error.status) {
       case 401:
-        this.loginService.handleLogin();
+        this.injector.get(LoginService).logout();
+        this.injector.get(LoginService).handleLogin(this.injector.get(Router).url);
         break;
     }
 

@@ -12,6 +12,7 @@ import {EditProductComponent} from './edit-product/edit-product.component';
 import {ModalDeleteProductComponent} from './modal-delete-product/modal-delete-product.component';
 import {CurrencyMaskModule} from "ng2-currency-mask";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import { SortProductsComponent } from './sort-products/sort-products.component';
 
 
 @NgModule({
@@ -24,7 +25,7 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
     CurrencyMaskModule
   ],
   declarations: [ProductListComponent, CreateProductComponent, ProductFieldsComponent,
-    ProductDetailsComponent, EditProductComponent, ModalDeleteProductComponent],
+    ProductDetailsComponent, EditProductComponent, ModalDeleteProductComponent, SortProductsComponent],
   providers: [ProductService]
 })
 export class ProductModule { }

@@ -1,6 +1,22 @@
-<app-modal-delete-product [product]="product"
-  (notify)="onNotify($event)"></app-modal-delete-product>
-
+<p-toast></p-toast>
+<p-dialog *ngIf="product" [(visible)]="displayDialogDeleteProduct" [modal]="true">
+  <p-header>
+    Remover Produto
+  </p-header>
+  Tem certeza que deseja remover o produto "{{product.name}}" ?
+  <p-footer>
+    <div class="row">
+      <div class="col-12 pull-right">
+        <button class="btn btn-danger" (click)="displayDialogDeleteProduct = false">
+          <i class="fa fa-stop"></i>&nbsp;Não
+        </button>
+        <button class="btn btn-success" (click)="removeProduct()">
+          <i class="fa fa-check"></i>&nbsp;Sim
+        </button>
+      </div>
+    </div>
+  </p-footer>
+</p-dialog>
 <div class="container" *ngIf="product">
   <div class="row">
     <div class="col-sm-8 col-lg-8">
@@ -16,8 +32,8 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-lg-8 img-responsive" [ngClass]="{'border': product.photo}">
-      <img *ngIf="product.photo" src="data:image/PNG;base64,{{product.photo}}" class="img-fluid">
+    <div class="col-lg-8 border">
+      <img [src]="product.sanitizeImgUrl" class="img-fluid img-responsive">
     </div>
     <div class="col-1"></div>
     <div class="col-lg-3 border">
@@ -79,9 +95,7 @@
       {{product.description}}
     </div>
   </div>
-  <div class="row">
-    <div class="col-12">
-      <p-galleria [images]="images" [showCaption]="false"></p-galleria>
-    </div>
+  <div class="row" *ngIf="product.listProdImgUrls && product.listProdImgUrls.length > 0">
+    <p-galleria [images]="images" [showCaption]="false"></p-galleria>
   </div>
 </div>

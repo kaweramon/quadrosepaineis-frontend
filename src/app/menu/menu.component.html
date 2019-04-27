@@ -12,10 +12,15 @@
           Início <span class="sr-only">(current)</span>
         </a>
       </li>-->
-      <li class="nav-item" routerLinkActive="active" id="menu-item-PRODUCTS">
-        <a class="nav-link" [routerLink]="['/products']">
+      <li class="nav-item dropdown" routerLinkActive="active" id="menu-item-PRODUCTS">
+        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button"
+           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" (click)="toogleMenuProducts()">
           Produtos
         </a>
+        <div class="dropdown-menu {{showMenuProduct}}"  aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" (click)="hideMenuProduct()" [routerLink]="['/products']">Listagem</a>
+          <a class="dropdown-item" (click)="hideMenuProduct()" [routerLink]="['/products/sort']">Reordenar</a>
+        </div>
       </li>
       <li class="nav-item" routerLinkActive="active" id="menu-item-CATEGORIES">
         <a class="nav-link" [routerLink]="['/categories']">Categorias</a>
@@ -26,9 +31,9 @@
   <div class="navbar-custom-menu">
     <ul class="nav navbar-nav">
       <li class="user user-menu">
-        <span *ngIf="isLoggedIn(); else isNotLooged">
-          Olá, {{user?.name}} | <a>Sair</a>
-        </span>
+        <div *ngIf="isLoggedIn(); else isNotLooged" class="d-flex align-content-between">
+          <span style="color: white" class="d-none d-sm-block">Olá, {{user?.name}}</span>&nbsp;|&nbsp;<a (click)="logout()">Sair</a>
+        </div>
         <ng-template #isNotLooged>
           <a [routerLink]="['/login']">Entrar</a>
         </ng-template>

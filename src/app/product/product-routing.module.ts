@@ -4,6 +4,8 @@ import { CreateProductComponent } from './create-product/create-product.componen
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ProductListComponent } from './product-list/product-list.component';
+import {SortProductsComponent} from "./sort-products/sort-products.component";
+import {LoggedinGuard} from "../security/loggedin.guard";
 
 const routes: Routes = [
   {
@@ -12,15 +14,21 @@ const routes: Routes = [
   },
   {
     path: 'add',
-    component: CreateProductComponent
+    component: CreateProductComponent,
+    canLoad: [LoggedinGuard], canActivate: [LoggedinGuard]
   },
   {
     path: 'edit/:id',
-    component: EditProductComponent
+    component: EditProductComponent,
+    canLoad: [LoggedinGuard], canActivate: [LoggedinGuard]
   },
   {
     path: 'details/:id',
     component: ProductDetailsComponent
+  },
+  {
+    path: 'sort',
+    component: SortProductsComponent
   }
 ];
 

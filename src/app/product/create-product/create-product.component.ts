@@ -16,6 +16,7 @@ import {FormGroup} from "@angular/forms";
 import {InitFormGroupService} from "../../util/init-form-group.service";
 import {HandlerErrorMessage} from "../../util/handler-error-message";
 import * as $ from "jquery";
+import {NotificationsService} from "../../util/notifications/notifications.service";
 
 @Component({
   selector: 'app-create-product',
@@ -30,13 +31,14 @@ export class CreateProductComponent implements OnInit {
 
   public productForm: FormGroup;
 
-  // public errorHandler: HandlerErrorMessage = new HandlerErrorMessage();
+  public errorHandler: HandlerErrorMessage = new HandlerErrorMessage(this.notificationsService, null);
 
   public loading: boolean = false;
 
   constructor(private service: ProductService,
     private initFormGroupService: InitFormGroupService,
-    private messageService: MessageService, private router: Router) { }
+    private messageService: MessageService,
+    private notificationsService: NotificationsService) { }
 
   ngOnInit() {
     this.product = new Product();
@@ -62,14 +64,14 @@ export class CreateProductComponent implements OnInit {
           this.messageService.add({severity: 'success', summary: MSG_SUCCESS, detail: MSG_PRODUCT_CREATED});
         }, error => {
           this.stopLoading();
-          /*this.messageService.add({severity: 'error',
-            summary: MSG_ERROR, detail: this.errorHandler.getErrorMessage(error)});*/
+          this.messageService.add({severity: 'error',
+            summary: MSG_ERROR, detail: this.errorHandler.getErrorMessage(error)});
           this.service.delete(result.id).subscribe(() => {
 
           }, errorDelete => {
             this.stopLoading();
-            /*this.messageService.add({severity: 'error', summary: MSG_ERROR,
-              detail: this.errorHandler.getErrorMessage(errorDelete)});*/
+            this.messageService.add({severity: 'error', summary: MSG_ERROR,
+              detail: this.errorHandler.getErrorMessage(errorDelete)});
           });
         });
       } else {
@@ -77,19 +79,18 @@ export class CreateProductComponent implements OnInit {
         this.messageService.add({severity: 'success', summary: MSG_SUCCESS, detail: MSG_PRODUCT_CREATED});
         this.stopLoading();
       }
+      console.log(gallery);
       if (gallery && gallery.length > 0) {
-        console.log(gallery);
         this.service.uploadGallery(result.id, gallery).subscribe(() => {
-          productFields.resetGallery();
+          this.clearProdForm();
         }, error => {
           this.stopLoading();
-          /*this.messageService.add({severity: 'error', summary: MSG_ERROR,
-            detail: this.errorHandler.getErrorMessage(error)});*/
+          this.notificationsService.notify("error", MSG_ERROR, this.errorHandler.getErrorMessage(error));
         });
       }
     }, error => {
       this.stopLoading();
-      // this.messageService.add({severity: 'error', summary: MSG_ERROR, detail: this.errorHandler.getErrorMessage(error)});
+      this.notificationsService.notify("error", MSG_ERROR, this.errorHandler.getErrorMessage(error));
     });
   }
 

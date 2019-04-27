@@ -30,6 +30,7 @@ import {AuthInterceptor} from "../security/auth-interceptor";
 import {HandlerErrorMessage} from "../util/handler-error-message";
 import {NotificationsService} from "../util/notifications/notifications.service";
 import {NotificationsComponent} from "../util/notifications/nofitications.component";
+import {DragulaModule} from "ng2-dragula";
 
 @NgModule({
   imports: [
@@ -46,7 +47,8 @@ import {NotificationsComponent} from "../util/notifications/nofitications.compon
     AutoCompleteModule,
     FileUploadModule,
     GalleriaModule,
-    GrowlModule
+    GrowlModule,
+    DragulaModule.forRoot()
   ],
   declarations: [
     ValidationMessageComponent,
@@ -72,7 +74,8 @@ import {NotificationsComponent} from "../util/notifications/nofitications.compon
     InputComponent,
     FileUploadModule,
     GalleriaModule,
-    GrowlModule
+    GrowlModule,
+    DragulaModule
   ]
 })
 export class SharedModule {

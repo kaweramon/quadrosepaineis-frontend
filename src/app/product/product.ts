@@ -16,7 +16,8 @@ export class Product {
   public gallery: any[];
   public categories: Category[];
   public sanitizeImgUrl: any;
-  public galleryPaths: string[];
+  public listProdImgUrls: any[];
+  public sequence: number;
 
   constructor() {
     this.isActive = true;
